@@ -2,26 +2,265 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+/* ultraLight truetype=ttf*/
+@font-face {
+  font-family: "myfont-ultraLight";
+  src: url("../public/helvetica-neue-55-cdnfonts/HelveticaNeueUltraLightItal.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
-
+/* Light opentype=otf*/
+@font-face {
+  font-family: "myfont-light";
+  src: url("../public//helvetica-neue-55-cdnfonts/HelveticaNeueLight.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+/* Medium */
+@font-face {
+  font-family: "myfont-medium";
+  src: url("../public/helvetica-neue-55-cdnfonts/HelveticaNeueMedium.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+/* Heavy */
+@font-face {
+  font-family: "myfont-heavy";
+  src: url("../public/helvetica-neue-55-cdnfonts/HelveticaNeue-HeavyCond.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif, Arial, Helvetica, sans-serif;
+  font-weight: 300;
+}
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #f1f1f1;
+}
+a {
+  text-decoration: none;
+  color: unset;
+}
+.btn {
+  padding: 7px 25px;
+  background-color: rgb(37, 197, 246);
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  border:1px solid rgb(37, 197, 246);
+}
+.btn:hover {
+  background:transparent;
+  color: rgb(37, 197, 246);
+  border:1px solid rgb(37, 197, 246);
+}
+
+
+/* input, textarea {
+  @apply px-2 py-1 border border-slate-300 rounded-sm outline-none
+}
+textarea {
+  @apply h-36
+} */
+/* ============= Main =====================*/
+.dashboard {
+  width: calc(100% - 15%);
+}
+
+
+
+/* ============= Sidebar Css =====================*/
+.sidebar {
+  width: 200px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+  background: #f1f1f1;
+}
+.sidebar_container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: space-between;
+}
+.sidebar_header, .sidebar_bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+}
+.sidebar_logo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 50px;
+  align-items: center;
+}
+
+/* ============= Dashboard Top =====================*/
+.facture_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 50px;
+}
+.facture_header-logo {
+  color: black;
+}
+.facture_item {
+  width: 100%;
+  padding: 10px;
+  transition: 1s;
+  border: 1px solid gray;
+  border-radius: 2px;
+}
+.facture_id {
+  cursor: pointer;
+}
+.facture_id:hover {
+  color:pink;
+  transform: scaleY(1.1);
+}
+.facture_container {
+  padding-top: 200px;
+}
+
+/* ============= Create facture =====================*/
+.new_invoice {
+  width: 100%;
+  margin: auto;
+}
+.new_invoice-header {
+  margin-bottom: 1.9rem;
+}
+.new_invoice-body {
+  padding-bottom: 40px;
+}
+
+.bill_from, .client, .facture_date, .item_details, .payent, .note {
+  margin-bottom: 1.9rem;
+}
+
+.bill_title, .client_title, .facture_date-title, .item_details-title, .payment-title, .note-title  {
+  font-style: italic;
+  font-family: "myfont-heavy";
+
+}
+
+.form_group input, textarea {
+  padding: 6px 10px;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px gainsboro solid;
+  outline: none;
+  background: gainsboro;
+}
+
+.bill_title p {
+  margin-bottom: 10px;
+}
+
+.inline_form-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+.inline_form-groupA {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 2rem;
+}
+.form_group {
+  margin-bottom: 2rem;
+}
+.facture_btn {
+  margin-top: 5rem;
+  display: flex;
+  justify-content: space-between;
+}
+.facture_btn div {
+  display: flex;
+  gap: 2rem
+}
+.edit-btn {
+  padding: 7px 25px;
+  background-color: pink;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  border:1px solid pink;
+}
+.edit-btn:hover {
+  background:transparent;
+  color: pink;
+  border:1px solid pink;
+}
+.draft-btn, .mark_as-btn {
+  padding: 7px 25px;
+  background-color: pink;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  border:1px solid pink;
+}
+.row {
+  border: 1px solid rgb(162, 80, 80);
+  border-radius: 5px;
+  margin-bottom: 2rem;
+  padding: 16px;
+}
+
+
+/*================== commissions ================= */
+.editCompany_header h2, .createCompany_header h2, .editCommission_header h2, .createCommission_header h2, .companies_header h2, .commissions_header h2, .clients_header h2, .payments_header h2, .categories_header h2, .items_header h2, .editItem_header h2 {
+  font-family: 'Playfair Display', serif; 
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+.commissions_header {
+  margin-bottom: 2rem;
+}
+.card_group {
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px gainsboro solid;
+  outline: none;
+  background: gainsboro;
+  box-shadow: 2px 2px 2px gray;
+}
+.inline_card-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 2rem;
+  gap: 1rem;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.edit-btn {
+  padding: 7px 25px;
+  background-color: pink;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  border:1px solid pink;
+}
+
+.oneFacture_container {
+  width: 100%;
+}
+.onePayment_container {
+  border-top: .8px solid black;
 }
