@@ -37,7 +37,6 @@ const OneRow: React.FC<OneRowProps> = ({ rowId }) => {
       const catName = row?.category
       try {
         if (!catName) {
-          console.log('Category name is undefined')
           return
         }
 
@@ -48,7 +47,6 @@ const OneRow: React.FC<OneRowProps> = ({ rowId }) => {
           const data = await res.json()
           const category = await data.category
           if (!category) {
-            console.log('Category not found')
             return
           }
           setCategory(category)
@@ -65,7 +63,6 @@ const OneRow: React.FC<OneRowProps> = ({ rowId }) => {
       const rowId = row?.item
       try {
         if (!rowId) {
-          console.log('Row ID is undefined')
           return
         }
 

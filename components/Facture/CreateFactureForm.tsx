@@ -115,13 +115,6 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
     }
     calculateSubtotal()
   }, [rows])
-  // const calculateSubtotal = () => {
-  //   const subtotalValue = rows.reduce((acc, row) => acc + row.total, 0)
-  //   setSubtotal(subtotalValue)
-  // }
-  // useEffect(() => {
-  //   calculateSubtotal()
-  // }, [rows, calculateSubtotal])
 
   /* ================ Calcul all total====================*/
   useEffect(() => {
@@ -134,12 +127,6 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
     }
     calculAllTotal()
   }, [subtotal, selectedCommissionTaux, allTotal])
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     await calculAllTotal()
-  //   }
-  //   fetchData()
-  // }, [subtotal, selectedCommissionTaux, allTotal, calculAllTotal])
 
   /* ================ Company ======================*/
   const getCompanyInfoByName = async (companyName: string) => {

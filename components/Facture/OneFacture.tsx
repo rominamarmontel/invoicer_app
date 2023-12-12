@@ -1,78 +1,13 @@
-import { CommissionProps, FactureProps, RowProps } from '@/types'
+import { FactureProps } from '@/types'
 import OneCompany from '../Company/OneCompany'
 import OneClient from '../Client/OneClient'
 import OneRow from '../Row/OneRow'
 import OnePayment from '../Payment/OnePayment'
-import { useState, useEffect } from 'react'
+import FactureCalculator from '../FactureCalculator'
 
 const OneFacture = ({ facture }: { facture: FactureProps }) => {
-  const [subtotal, setSubtotal] = useState<number>(0)
-  const [rowDetails, setRowDetails] = useState<RowProps[]>([])
-  const [commission, setCommission] = useState<CommissionProps | null>(null)
-  const [commissionValue, setCommissionValue] = useState<number>(0)
-
-  useEffect(() => {
-    const calculateSubtotal = async () => {
-      try {
-        if (!facture.rows || facture.rows.length === 0) {
-          setSubtotal(0)
-          setRowDetails([])
-          return
-        }
-
-        const rowDetails = await Promise.all(
-          facture.rows.map(async (row) => {
-            const response = await fetch(`/api/rows/${row}`)
-            if (!response.ok) {
-              throw new Error(`Failed to fetch row with ID ${row}`)
-            }
-            const data = await response.json()
-            return data.row
-          })
-        )
-        setRowDetails(rowDetails.filter(Boolean))
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    const calculateCommissionValue = () => {
-      if (!facture.commission) {
-        console.log('Commission data is missing')
-        return
-      }
-      const commissionRate = facture.commission.taux || 0
-      const subtotalValue = rowDetails.reduce(
-        (acc, row) => acc + (row.total || 0),
-        0
-      )
-      setSubtotal(subtotalValue)
-      const commissionValue = subtotalValue * (commissionRate * 0.01)
-      setCommissionValue(commissionValue)
-    }
-
-    const fetchCommission = async () => {
-      try {
-        const res = await fetch(`/api/commissions/${facture.commission}`, {
-          cache: 'no-store',
-        })
-        if (res.ok) {
-          const data = await res.json()
-          const fetchedCommission = data.commission
-          setCommission(fetchedCommission)
-          if (fetchedCommission) {
-            calculateSubtotal()
-            calculateCommissionValue()
-          } else {
-            console.log('Commission data is missing')
-          }
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
-    fetchCommission()
-  }, [facture.rows, facture.commission, rowDetails])
+  const { subtotal, commissionValue, allTotal, commission } =
+    FactureCalculator(facture)
 
   return (
     <div className="m-5 p-5 lg:max-w-4xl lg:mx-auto bg-white rounded shadow">
@@ -197,14 +132,15 @@ const OneFacture = ({ facture }: { facture: FactureProps }) => {
                         colSpan={7}
                         className="text-right whitespace-nowrap border-r px-3 py-2 dark:border-neutral-500"
                       >
-                        {commission?.commissionName &&
-                          commission.commissionName}{' '}
-                        {commission?.taux && commission.taux} <span>%</span>
+                        {commission?.commissionName && (
+                          <>
+                            {commission.commissionName} {commission.taux}{' '}
+                            <span>%</span>
+                          </>
+                        )}
                       </td>
                       <td className="flex justify-end whitespace-nowrap px-3 py-2 dark:border-neutral-500">
-                        €
-                        {subtotal *
-                          (commission?.taux ? commission.taux * 0.01 : 0)}
+                        € {commissionValue}
                       </td>
                     </tr>
                     <tr className="border-b border-t-2">
@@ -214,14 +150,8 @@ const OneFacture = ({ facture }: { facture: FactureProps }) => {
                       >
                         TOTAL
                       </td>
-                      <td
-                        col-start-7="true"
-                        className="flex justify-end px-3 py-2 font-bold"
-                      >
-                        €{' '}
-                        {subtotal *
-                          (commission?.taux ? commission.taux * 0.01 : 0) +
-                          subtotal}
+                      <td className="flex justify-end px-3 py-2 font-bold">
+                        € {allTotal}
                       </td>
                     </tr>
                   </tbody>

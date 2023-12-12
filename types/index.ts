@@ -71,7 +71,7 @@ export type FactureProps = {
   rows:RowProps[],
   note: string,
   payment: PaymentProps,
-  commission: CommissionProps,
+  commission: CommissionProps | null
 }
 
 export type RowProps = {
