@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { CommentProps } from 'postcss'
 import Commissions from '@/components/Commission/Commissions'
 import { CommissionProps } from '@/types'
 
@@ -11,7 +10,7 @@ const GetAllCommissions = () => {
   useEffect(() => {
     const fetchAllCommissions = async () => {
       try {
-        const res = await fetch('/api/commissions')
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/commissions`)
         if (res.ok) {
           const data = await res.json()
           setCommissions(data)

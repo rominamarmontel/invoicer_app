@@ -11,9 +11,12 @@ const CategoryRows = ({ params }: { params: { catName: string } }) => {
   useEffect(() => {
     const getRows = async () => {
       try {
-        const res = await fetch(`/api/categories/${catName}`, {
-          cache: 'no-store',
-        })
+        const res = await fetch(
+          `${process.env.NEXTAUTH_URL}/api/categories/${catName}`,
+          {
+            cache: 'no-store',
+          }
+        )
 
         if (res.ok) {
           const data = await res.json()
@@ -21,16 +24,16 @@ const CategoryRows = ({ params }: { params: { catName: string } }) => {
 
           const formattedRows = await Promise.all(
             rows.map(async (row: RowProps) => {
-              const itemResponse = await fetch(`/api/items/${row.items._id}`)
-              const itemData = await itemResponse.json()
-
+              const res = await fetch(
+                `${process.env.NEXTAUTH_URL}/api/items/${row.items._id}`
+              )
+              const itemData = await res.json()
               return {
                 ...row,
                 items: itemData,
               }
             })
           )
-
           setRows(formattedRows)
         }
       } catch (error) {

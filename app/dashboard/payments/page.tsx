@@ -10,7 +10,7 @@ const GetAllPayments = () => {
   useEffect(() => {
     const fetchAllPayments = async () => {
       try {
-        const res = await fetch('/api/payments')
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/payments`)
         if (res.ok) {
           const data = await res.json()
           setPayments(data)

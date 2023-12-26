@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { RowProps } from '@/types'
+import EditRowForm from '@/components/Row/EditRowForm'
 
 const DetailsRow = ({ params }: { params: { id: string } }) => {
   const [row, setRow] = useState<RowProps | null>(null)
@@ -32,7 +33,7 @@ const DetailsRow = ({ params }: { params: { id: string } }) => {
   return (
     <div>
       {row ? (
-        <OneRow rowId={row._id} />
+        <EditRowForm row={row} />
       ) : (
         <div className="loading">Loading...</div>
       )}

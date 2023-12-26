@@ -10,7 +10,9 @@ const GetAllClients = () => {
   useEffect(() => {
     const fetchAllClients = async () => {
       try {
-        const res = await fetch('/api/clients')
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/clients`, {
+          cache: 'no-store',
+        })
         if (res.ok) {
           const data = await res.json()
           setClients(data)

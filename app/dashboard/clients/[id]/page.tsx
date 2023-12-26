@@ -2,9 +2,9 @@
 
 import { ClientProps } from '@/types'
 import React, { useEffect, useState } from 'react'
-import OneClient from '@/components/Client/OneClient'
+import EditClientForm from '@/components/Client/EditClientForm'
 
-const DetailsClient = ({ params }: { params: { id: string } }) => {
+const EditClient = ({ params }: { params: { id: ClientProps } }) => {
   const [client, setClient] = useState<ClientProps | null>(null)
 
   useEffect(() => {
@@ -33,11 +33,11 @@ const DetailsClient = ({ params }: { params: { id: string } }) => {
   return (
     <div>
       {client ? (
-        <OneClient clientId={client._id} />
+        <EditClientForm client={client} />
       ) : (
         <div className="loading">Loading...</div>
       )}
     </div>
   )
 }
-export default DetailsClient
+export default EditClient

@@ -1,5 +1,3 @@
-'use client'
-
 import { ItemProps } from '@/types'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -51,61 +49,72 @@ const EditItemForm = ({ item }: { item: ItemProps }) => {
     return null
   }
   return (
-    <div className="m-5 p-5 lg:max-w-4xl lg:mx-auto bg-white rounded shadow">
-      <div className="editItem_container">
-        <div className="editItem_header flex items-center justify-between">
-          <span>
-            <Link href="/dashboard/items">
+    <div className="editItemForm">
+      <div className="editItemForm_container">
+        <div className="editItemForm_header">
+          <div className="editItemForm_header-logo">
+            <h3>Edit item</h3>
+          </div>
+          <Link
+            href="/dashboard/items"
+            className="flex items-center gap-2 mb-4"
+          >
+            <div>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6"
+                className="w-6 h-6 text-slate-400"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                  d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                 />
               </svg>
-            </Link>
-          </span>
-          <h2>Edit item</h2>
+            </div>
+            <span className="text-sm text-slate-400">Return</span>
+          </Link>
         </div>
-        <form className="flex flex-col" onSubmit={handleSubmit}>
-          <div className="form_group flex flex-col">
-            <label>Item content in french</label>
-            <input
-              onChange={(e) =>
-                setItemNames((prevItems) => ({
-                  ...prevItems,
-                  fr: e.target.value,
-                }))
-              }
-              type="text"
-              placeholder="Item name (French)"
-              value={itemNames.fr || ''}
-              className="md:flex-1 w-[100%] border border-red-400"
-            />
+
+        <form className="flex w-full justify-center" onSubmit={handleSubmit}>
+          <div className="flex flex-col w-2/3">
+            <div className="form_group mb-8">
+              <label>Item content in french</label>
+              <input
+                onChange={(e) =>
+                  setItemNames((prevItems) => ({
+                    ...prevItems,
+                    fr: e.target.value,
+                  }))
+                }
+                type="text"
+                placeholder="Item name (French)"
+                value={itemNames.fr || ''}
+                className="md:flex-1 w-[100%] border border-red-400"
+              />
+            </div>
+            <div className="form_group mb-8">
+              <label>Item content in japanese</label>
+              <input
+                onChange={(e) =>
+                  setItemNames((prevItems) => ({
+                    ...prevItems,
+                    jp: e.target.value,
+                  }))
+                }
+                type="text"
+                placeholder="Item name (japanese)"
+                value={itemNames.jp || ''}
+                className="md:flex-1 w-[100%] border border-red-400"
+              />
+            </div>
+            <div className="btn_container">
+              <button className="btn">Update</button>
+            </div>
           </div>
-          <div className="form_group flex flex-col">
-            <label>Item content in japanese</label>
-            <input
-              onChange={(e) =>
-                setItemNames((prevItems) => ({
-                  ...prevItems,
-                  jp: e.target.value,
-                }))
-              }
-              type="text"
-              placeholder="Item name (japanese)"
-              value={itemNames.jp || ''}
-              className="md:flex-1 w-[100%] border border-red-400"
-            />
-          </div>
-          <button className="btn">Update</button>
         </form>
       </div>
     </div>

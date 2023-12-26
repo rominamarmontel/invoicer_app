@@ -14,6 +14,7 @@ export const PUT = async (req:Request,{params}:{params: {id:string}}) => {
 
   const {
     bankName,
+    bankCode,
     accountNumber,
     bic,
     iban,
@@ -23,6 +24,7 @@ export const PUT = async (req:Request,{params}:{params: {id:string}}) => {
   await connectMongoDB()
   await Payment.findByIdAndUpdate(id, {
     bankName,
+    bankCode,
     accountNumber,
     bic,
     iban,

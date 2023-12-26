@@ -11,7 +11,7 @@ const GetAllItems = () => {
   useEffect(() => {
     const fetchAllItems = async () => {
       try {
-        const res = await fetch('/api/items')
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/items`)
         if (res.ok) {
           const data = await res.json()
           setItems(data)

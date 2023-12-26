@@ -1,40 +1,15 @@
-import { CommissionProps, FactureProps } from '@/types'
-import React, { useEffect, useState } from 'react'
+import { CommissionProps } from '@/types'
+import React, { useState } from 'react'
 
-interface OneCommissionProps {
-  commissionId: CommissionProps
-  facture: FactureProps
-  subtotal: number
-}
-const OneCommission: React.FC<OneCommissionProps> = ({
+const OneCommission = ({
   commissionId,
-  facture,
   subtotal,
+}: {
+  commissionId: CommissionProps
+  subtotal: number
 }) => {
   const [commission, setCommission] = useState<CommissionProps | null>(null)
-
-  useEffect(() => {
-    const fetchCommission = async () => {
-      try {
-        const res = await fetch(`/api/commissions/${commissionId}`, {
-          cache: 'no-store',
-        })
-        if (res.ok) {
-          const data = await res.json()
-          const commission = await data.commission
-          if (!commission) {
-            console.log('Commission not found')
-            return
-          }
-          setCommission(commission)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchCommission()
-  }, [commissionId])
-
+  console.log(commission)
   return (
     <>
       <td

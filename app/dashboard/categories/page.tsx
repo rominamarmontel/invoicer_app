@@ -9,7 +9,7 @@ const GetAllCategories = () => {
   useEffect(() => {
     const fetchAllClients = async () => {
       try {
-        const res = await fetch('/api/categories')
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/categories`)
         if (res.ok) {
           const data = await res.json()
           setCategories(data)

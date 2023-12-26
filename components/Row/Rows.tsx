@@ -38,7 +38,7 @@ const Rows = ({
   }
 
   return (
-    <div className="m-5 p-5 lg:max-w-4xl lg:mx-auto bg-white rounded shadow">
+    <div className="rows m-5 p-5 bg-white rounded shadow">
       <div className="rows_container">
         <div className="rows_header flex rows-center justify-between">
           <h2>Row List</h2>

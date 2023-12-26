@@ -9,10 +9,12 @@ const GetAllCompanies = () => {
   useEffect(() => {
     const fetchAllCompanies = async () => {
       try {
-        const res = await fetch(`/api/companies`)
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/companies`, {
+          cache: 'no-store',
+        })
         if (res.ok) {
           const data = await res.json()
-          setCompanies(data)
+          setCompanies(data.companies)
         }
       } catch (error) {
         console.log(error)

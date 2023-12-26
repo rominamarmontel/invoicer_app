@@ -1,6 +1,7 @@
 'use client'
 
 import { ClientProps } from '@/types'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -77,7 +78,7 @@ const EditClientForm = ({ client }: { client: ClientProps }) => {
       })
       if (res.ok) {
         toast.success('Update Client successfully')
-        router.push('/dashboard')
+        router.push('/dashboard/clients')
         router.refresh()
       }
     } catch (error) {
@@ -86,79 +87,149 @@ const EditClientForm = ({ client }: { client: ClientProps }) => {
   }
 
   return (
-    <div className="m-5 p-5 lg:max-w-4xl lg:mx-auto bg-white rounded shadow">
-      <div className="createClient_container">
-        <div className="createClient_header">
-          <h2>Edit your Client info</h2>
+    <div className="editClientForm">
+      <div className="editClientForm_container">
+        <div className="editClientForm_header">
+          <div className="editClientForm_header-logo">
+            <h3>Edit your Client info</h3>
+          </div>
+          <Link
+            href="/dashboard/clients"
+            className="flex items-center gap-2 mb-4"
+          >
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 text-slate-400"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            </div>
+            <span className="text-sm text-slate-400">Return</span>
+          </Link>
         </div>
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Client name"
-            onChange={(e) => setClientName(e.target.value)}
-            value={clientName}
-          />
-          <input
-            type="text"
-            placeholder="Attention client name"
-            onChange={(e) => setPersonName(e.target.value)}
-            value={personName || ''}
-          />
-          <input
-            type="text"
-            placeholder="Client address"
-            onChange={(e) => setClientAdress(e.target.value)}
-            value={clientAddress || ''}
-          />
-          <input
-            type="text"
-            placeholder="Client city name"
-            onChange={(e) => setClientCity(e.target.value)}
-            value={clientCity || ''}
-          />
-          <input
-            type="text"
-            placeholder="Client zipcode"
-            onChange={(e) => setClientZipcode(e.target.value)}
-            value={clientZipcode || ''}
-          />
-          <input
-            type="text"
-            placeholder="Client country"
-            onChange={(e) => setClientCountry(e.target.value)}
-            value={clientCountry || ''}
-          />
-          <input
-            type="text"
-            placeholder="Client phone number"
-            onChange={(e) => setClientPhone(e.target.value)}
-            value={clientPhone || ''}
-          />
-          <input
-            type="text"
-            placeholder="Client email"
-            onChange={(e) => setClientEmail(e.target.value)}
-            value={clientEmail || ''}
-          />
-          <input
-            type="text"
-            placeholder="Client website"
-            onChange={(e) => setClientWebsite(e.target.value)}
-            value={clientWebsite || ''}
-          />
-          <input
-            type="text"
-            placeholder="Client Siret number"
-            onChange={(e) => setClientSiret(e.target.value)}
-            value={clientSiret || ''}
-          />
-          <input
-            type="text"
-            placeholder="Client TVA"
-            onChange={(e) => setClientTva(e.target.value)}
-            value={clientTva || ''}
-          />
-          <button className="btn">Update</button>
+
+        <form className="flex w-full justify-center" onSubmit={handleSubmit}>
+          <div className="flex flex-col w-2/3">
+            <div className="form_group inline_form-group w-full">
+              <div className="form_group w-1/2 mb-4">
+                <label>Company Name</label>
+                <input
+                  type="text"
+                  placeholder="Client name"
+                  onChange={(e) => setClientName(e.target.value)}
+                  value={clientName}
+                />
+              </div>
+              <div className="form_group w-1/2 mb-4">
+                <label>Client Name</label>
+                <input
+                  type="text"
+                  placeholder="Attention client name"
+                  onChange={(e) => setPersonName(e.target.value)}
+                  value={personName || ''}
+                />
+              </div>
+            </div>
+            <div className="form_group mb-8">
+              <label>Address</label>
+              <input
+                type="text"
+                placeholder="Client address"
+                onChange={(e) => setClientAdress(e.target.value)}
+                value={clientAddress || ''}
+              />
+            </div>
+            <div className="form_group inline_form-group w-full">
+              <div className="form_group w-1/2 mb-4">
+                <label>City</label>
+                <input
+                  type="text"
+                  placeholder="Client city name"
+                  onChange={(e) => setClientCity(e.target.value)}
+                  value={clientCity || ''}
+                />
+              </div>
+              <div className="form_group w-1/2 mb-4">
+                <label>Zipcode</label>
+                <input
+                  type="text"
+                  placeholder="Client zipcode"
+                  onChange={(e) => setClientZipcode(e.target.value)}
+                  value={clientZipcode || ''}
+                />
+              </div>
+              <div className="form_group w-1/2 mb-4">
+                <label>Country</label>
+                <input
+                  type="text"
+                  placeholder="Client country"
+                  onChange={(e) => setClientCountry(e.target.value)}
+                  value={clientCountry || ''}
+                />
+              </div>
+            </div>
+            <div className="form_group inline_form-group w-full">
+              <div className="form_group w-1/2 mb-4">
+                <label>Telephone</label>
+                <input
+                  type="text"
+                  placeholder="Client phone number"
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  value={clientPhone || ''}
+                />
+              </div>
+              <div className="form_group w-1/2 mb-4">
+                <label>E-mail</label>
+                <input
+                  type="text"
+                  placeholder="Client email"
+                  onChange={(e) => setClientEmail(e.target.value)}
+                  value={clientEmail || ''}
+                />
+              </div>
+            </div>
+            <div className="form_group inline_form-group w-full">
+              <div className="form_group w-1/2 mb-4">
+                <label>SIRET</label>
+                <input
+                  type="text"
+                  placeholder="Client Siret number"
+                  onChange={(e) => setClientSiret(e.target.value)}
+                  value={clientSiret || ''}
+                />
+              </div>
+              <div className="form_group w-1/2 mb-4">
+                <label>TVA</label>
+                <input
+                  type="text"
+                  placeholder="Client TVA"
+                  onChange={(e) => setClientTva(e.target.value)}
+                  value={clientTva || ''}
+                />
+              </div>
+            </div>
+            <div className="form_group mb-8">
+              <label>Web-site</label>
+              <input
+                type="text"
+                placeholder="Client website"
+                onChange={(e) => setClientWebsite(e.target.value)}
+                value={clientWebsite || ''}
+              />
+            </div>
+            <div className="btn_container">
+              <button className="btn">Update</button>
+            </div>
+          </div>
         </form>
       </div>
     </div>

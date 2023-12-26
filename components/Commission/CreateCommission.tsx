@@ -38,47 +38,58 @@ const CreateCommission = () => {
   }
 
   return (
-    <div className="m-5 p-5 lg:max-w-4xl lg:mx-auto bg-white rounded shadow">
+    <div className="createCommission">
       <div className="createCommission_container">
-        <div className="createCommission_header flex items-center justify-between">
-          <h2>Create commission</h2>
-          <span>
-            <Link href="/dashboard/commissions">
+        <div className="createCommission_header">
+          <div className="createCommission_header-logo">
+            <h3>Create commission</h3>
+          </div>
+          <Link
+            href="/dashboard/commissions"
+            className="flex items-center gap-2 mb-4"
+          >
+            <div>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6"
+                className="w-6 h-6 text-slate-400"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                  d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                 />
               </svg>
-            </Link>
-          </span>
+            </div>
+            <span className="text-sm text-slate-400">Return</span>
+          </Link>
         </div>
-        <form className="flex flex-col" onSubmit={handleSubmit}>
-          <div className="form_group flex flex-col">
-            <label>Commission Name</label>
-            <input
-              type="text"
-              placeholder="ex. Prod commission, TVA..."
-              onChange={(e) => setCommissionName(e.target.value)}
-            />
+
+        <form className="flex w-full justify-center" onSubmit={handleSubmit}>
+          <div className="flex flex-col w-2/3">
+            <div className="form_group mb-8">
+              <label>Commission Name</label>
+              <input
+                type="text"
+                placeholder="ex. Prod commission, TVA..."
+                onChange={(e) => setCommissionName(e.target.value)}
+              />
+            </div>
+            <div className="form_group mb-8">
+              <label>Taux (%)</label>
+              <input
+                type="number"
+                placeholder="ex. 30"
+                onChange={(e) => setTaux(Number(e.target.value))}
+              />
+            </div>
+            <div className="btn_container">
+              <button className="btn">Create</button>
+            </div>
           </div>
-          <div className="form_group flex flex-col">
-            <label>Taux (%)</label>
-            <input
-              type="number"
-              placeholder="ex. 30"
-              onChange={(e) => setTaux(Number(e.target.value))}
-            />
-          </div>
-          <button className="btn">Create</button>
         </form>
       </div>
     </div>

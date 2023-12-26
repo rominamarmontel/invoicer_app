@@ -59,6 +59,7 @@ export type ItemProps = {
   }
 }
 
+
 export type FactureProps = {
   _id:string,
   company: CompanyProps,
@@ -77,8 +78,8 @@ export type FactureProps = {
 export type RowProps = {
   _id: string,
   category: { _id: string; catName: string },
-  item: { _id: string; itemName: { fr: string; jp: string } },
-  itemPlus: string,
+  item?: { _id: string; itemName: { fr: string; jp: string } },
+  itemPlus?: string,
   qty: number,
   price: number,
   unit: string,

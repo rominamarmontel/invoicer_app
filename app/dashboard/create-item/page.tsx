@@ -1,7 +1,7 @@
-import CreateItemsForm from '@/components/Item/CreateItemsForm'
+import CreateItemForm from '@/components/Item/CreateItemForm'
 
 const CreateItems = () => {
-  return <CreateItemsForm />
+  return <CreateItemForm />
 }
 
 export default CreateItems

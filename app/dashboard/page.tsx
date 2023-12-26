@@ -1,24 +1,15 @@
-import Dashboard from '@/components/Dashboard'
-import { CompanyProps } from '@/types'
-import React from 'react'
+import DashboardTop from '@/components/Dashboard/Dashboard'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '../api/auth/auth'
+import { redirect } from 'next/navigation'
 
-const getCompanies = async (): Promise<CompanyProps[] | null> => {
-  try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/company`, {
-      cache: 'no-store',
-    })
-    if (res.ok) {
-      const data = res.json()
-      return data
-    }
-  } catch (error) {
-    console.log(error)
+const GetDashboard = async () => {
+  const session = await getServerSession(authOptions)
+
+  if (!session) {
+    redirect('/sign-in')
   }
-  return null
-}
-const getFacture = () => {
-  const companies = getCompanies()
-  return <Dashboard />
+  return <DashboardTop />
 }
 
-export default getFacture
+export default GetDashboard

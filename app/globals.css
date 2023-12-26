@@ -41,49 +41,121 @@
   font-weight: 300;
 }
 body {
-  background: #f1f1f1;
+  background: #fff;
 }
 a {
   text-decoration: none;
   color: unset;
 }
 .btn {
-  padding: 7px 25px;
-  background-color: rgb(37, 197, 246);
+  background-color: #FF6666;
   color: #fff;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
-  border:1px solid rgb(37, 197, 246);
+  border:1px solid #FF6666;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  font-family: 'Arial', sans-serif;
+  margin-top: 2rem;
+  transition: all 0.5s 0s ease;
 }
 .btn:hover {
-  background:transparent;
-  color: rgb(37, 197, 246);
-  border:1px solid rgb(37, 197, 246);
+  background: #dd6666;
+  color: #fff;
+  border:1px solid #dd6666;
 }
-
-
-/* input, textarea {
-  @apply px-2 py-1 border border-slate-300 rounded-sm outline-none
+.btn_container {
+  display: flex;
+  justify-content: center;
 }
-textarea {
-  @apply h-36
-} */
-/* ============= Main =====================*/
-.dashboard {
-  width: calc(100% - 15%);
+.btn-gray {
+  background-color: #888585;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  font-family: 'Arial', sans-serif;
+  margin-top: 2rem;
 }
-
-
+.btn-black {
+  background-color: black;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 20px;
+  border:1px solid black;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 0.5rem 5rem;
+  font-family: 'Arial', sans-serif;
+  margin-top: 2rem;
+}
+.btn-black:hover {
+  background: #67656a;
+  color: #fff;
+  border:1px solid #67656a;
+  transition: all 0.5s 0s ease;
+}
+select {
+  outline: none;
+}
+.box select {
+  width: 210px;
+  font-size: 14px;
+}
+.hide-spin::-webkit-inner-spin-button,
+.hide-spin::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance:textfield;
+}
+/* input.inputText, input.hide-spin, select {
+  display: inline-block;
+  width: 5em !important;
+  max-width: 100%;
+  padding: 0.5em;
+  border: 1px solid #999;
+  box-sizing: border-box;
+  background: #f2f2f2;
+  margin: 0.5em 0;
+  width: 100%;
+} 
+input.inputText2 {
+  display: inline-block;
+  width: 15em !important;
+  max-width: 100%;
+  padding: 0.5em;
+  border: 1px solid #999;
+  box-sizing: border-box;
+  background: #f2f2f2;
+  margin: 0.1em 0.3rem;
+}  */
+/* input number sidebutton no display */ 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+/* input border no display */ 
+input[type="number"]:focus {
+  outline: none; /* フォーカス時の枠線を非表示 */
+}
 
 /* ============= Sidebar Css =====================*/
 .sidebar {
-  width: 200px;
-  height: 100vh;
+  width: 20%;
+  height:100vh;
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   z-index: 9999;
-  background: #f1f1f1;
+  background: black;
 }
 .sidebar_container {
   display: flex;
@@ -99,25 +171,43 @@ textarea {
   justify-content: center;
   margin-top: 50px;
 }
-.sidebar_logo {
+.sidebar_header-logo h2{
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin-bottom: 50px;
   align-items: center;
+  color: #fff;
+  font-size: 35px;
+  font-family: 'Playfair Display'!important;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  opacity: 1;
 }
-
+.sidebar_list {
+  width: 100%;
+}
+.sidebar_list li {
+  width: 100%;
+  height: 3rem;
+  border-bottom: 2px solid #fff;
+  margin-bottom: 10px;
+  text-align: center;
+  padding: 10px 0;
+  font-weight: bold;
+  font-family: "myfont-medium";
+}
+.sidebar p {
+  font-family: "myfont-medium";
+  color: #fff;
+}
 /* ============= Dashboard Top =====================*/
-.facture_header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 50px;
+
+.facture_container {
+  padding-top: 200px;
 }
-.facture_header-logo {
-  color: black;
-}
-.facture_item {
+.facture_item, .dashboard_item {
   width: 100%;
   padding: 10px;
   transition: 1s;
@@ -131,22 +221,8 @@ textarea {
   color:pink;
   transform: scaleY(1.1);
 }
-.facture_container {
-  padding-top: 200px;
-}
 
 /* ============= Create facture =====================*/
-.new_invoice {
-  width: 100%;
-  margin: auto;
-}
-.new_invoice-header {
-  margin-bottom: 1.9rem;
-}
-.new_invoice-body {
-  padding-bottom: 40px;
-}
-
 .bill_from, .client, .facture_date, .item_details, .payent, .note {
   margin-bottom: 1.9rem;
 }
@@ -156,14 +232,28 @@ textarea {
   font-family: "myfont-heavy";
 
 }
-
-.form_group input, textarea {
+.inline_form-group {
+  margin-bottom: 1rem;
+}
+.form_group input, .form_group textarea {
   padding: 6px 10px;
   width: 100%;
-  border-radius: 5px;
-  border: 1px gainsboro solid;
+  border: 2px black solid;
   outline: none;
-  background: gainsboro;
+  background: rgb(241, 241, 241);
+  font-weight: 100;
+}
+.form_group select{
+  padding: 8px 10px;
+  width: 100%;
+  border: 2px black solid;
+  outline: none;
+  background: rgb(241, 241, 241);
+  font-weight: 100;
+}
+.form_group label {
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .bill_title p {
@@ -171,28 +261,24 @@ textarea {
 }
 
 .inline_form-group {
+  width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 2rem;
+  gap: 5px;
 }
+
 .inline_form-groupA {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   margin-bottom: 2rem;
 }
-.form_group {
-  margin-bottom: 2rem;
-}
-.facture_btn {
-  margin-top: 5rem;
+.inline_form-groupB {
   display: flex;
-  justify-content: space-between;
-}
-.facture_btn div {
-  display: flex;
-  gap: 2rem
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
 }
 .edit-btn {
   padding: 7px 25px;
@@ -216,21 +302,45 @@ textarea {
   border:1px solid pink;
 }
 .row {
-  border: 1px solid rgb(162, 80, 80);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.rows {
   border-radius: 5px;
   margin-bottom: 2rem;
   padding: 16px;
 }
 
 
-/*================== commissions ================= */
-.editCompany_header h2, .createCompany_header h2, .editCommission_header h2, .createCommission_header h2, .companies_header h2, .commissions_header h2, .clients_header h2, .payments_header h2, .categories_header h2, .items_header h2, .editItem_header h2 {
-  font-family: 'Playfair Display', serif; 
-  font-size: 2rem;
-  margin-bottom: 2rem;
+/*================== Common ================= */
+.dashboard, .rows, .payments, .items, .oneFacture, .companies, .commissions, .categories, .clients {
+  position: fixed;
+  top: 0;
+  left: 20%;
+  z-index: 9999;
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
 }
-.commissions_header {
-  margin-bottom: 2rem;
+.createpayment, .editPayment, .createItemForm, .editItemForm, .createFactureForm, .editFactureForm, .createCommission, .editCommissionForm, .createCategoryForm, .createCompanyForm, .editCompanyForm, .createClientForm, .editClientForm, .createPaymentForm, .editPaymentForm, .editItemForm {
+  width: 80%;
+  margin-left: 20%;
+  padding: 40px;
+}
+
+.editCompanyForm_header-logo h3, .createCompanyForm_header-logo h3, .editCommissionForm_header-logo h3, .createCommissionForm_header-logo h3, .companies_header-logo h3, .commissions_header-logo h3, .clients_header-logo h3, .payments_header-logo h3, .categories_header-logo h3, .items_header-logo h3, .editItemsForm_header-logo h3, .companies_header-logo h3, .clients_header-logo h3, .payments_header-logo h3, .categories_header-logo h3, .payments_header-logo h3, .commissions_header-logo h3, .dashboard_header-logo h3, .createFactureForm_header-logo h3, .editFactureForm_header-logo h3, .createClientForm_header-logo h3, .editClientForm_header-logo h3, .createPaymentForm_header-logo h3, .editPaymentForm_header-logo h3, .categories_header-logo h3, .createCategoryForm_header-logo h3, .createItemForm_header-logo h3, .editItemForm_header-logo h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.commissions_container, .companies_container, .clients_container, .payments_container, .categories_container, .items_container, .dashboard_container {
+  height: auto;
+  padding-bottom: 2rem;
+  padding: 20px 20px 2rem 20px;
+}
+form {
+  padding: 20px;
 }
 .card_group {
   padding: 6px 10px;
@@ -259,8 +369,20 @@ textarea {
 }
 
 .oneFacture_container {
+  padding: 10px;
   width: 100%;
+  min-height: 100vh; /* Set a minimum height to fill the viewport */
+  display: flex;
+  flex-direction: column;
 }
-.onePayment_container {
-  border-top: .8px solid black;
+.onePayment {
+  margin-top: auto;
+}
+
+.onePayment_text {
+  padding-top: 2px;
+  display: flex;
+  justify-items: space-between;
+  gap:10px;
+  font-size: 12px;
 }

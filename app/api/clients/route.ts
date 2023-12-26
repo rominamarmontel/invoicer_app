@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 export const GET = async (req: Request) => {
   await connectMongoDB()
   const clients = await Client.find()
-  return NextResponse.json(clients)
+  return NextResponse.json({clients})
 }
 
 export const POST = async (req: Request) => {

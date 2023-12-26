@@ -8,66 +8,51 @@ const Sidebar = () => {
     <div className="sidebar">
       <div className="sidebar_container">
         <div className="sidebar_header">
-          <div className="sidebar_logo">
-            <Image
-              src={imageAccount}
-              width={36}
-              alt="Profile Image"
-              className="rounded-full cursor-pointer"
-            />
-            <div>Bonjour!</div>
+          <div className="sidebar_header-logo">
+            <h2>Actarus Sarl</h2>
           </div>
-          <ul>
+          <ul className="sidebar_list">
             <li>
-              <Link href="/dashboard">Dashboard</Link>
-            </li>
-            <li>
-              <Link href="/dashboard/create-facture" className="flex gap-1">
-                Create New Facture
-                <span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </span>
+              <Link href="/dashboard">
+                <p>DASHBOARD</p>
               </Link>
             </li>
             <li>
-              <Link href="/dashboard/companies">Your company</Link>
+              <Link href="/dashboard/companies">
+                <p>COMPANY</p>
+              </Link>
             </li>
             <li>
-              <Link href="/dashboard/clients">Clients</Link>
+              <Link href="/dashboard/clients">
+                <p>CLIENTS</p>
+              </Link>
             </li>
             <li>
-              <Link href="/dashboard/payments">Payments</Link>
+              <Link href="/dashboard/payments">
+                <p>PAYMENTS</p>
+              </Link>
             </li>
             <li>
-              <Link href="/dashboard/categories">Categories</Link>
+              <Link href="/dashboard/categories">
+                <p>CATEGORIES</p>
+              </Link>
             </li>
             <li>
-              <Link href="/dashboard/items">Items</Link>
+              <Link href="/dashboard/items">
+                <p>ITEMS</p>
+              </Link>
             </li>
             <li>
-              <Link href="/dashboard/commissions">Commissions</Link>
-            </li>
-            <li>
-              <button onClick={() => signOut()} className="btn w-32">
-                Sign Out
-              </button>
+              <Link href="/dashboard/commissions">
+                <p>COMMISSIONS</p>
+              </Link>
             </li>
           </ul>
+          <button onClick={() => signOut()} className="btn w-32">
+            Sign Out
+          </button>
         </div>
-        <div className="sidebar_bottom">@copyright Romi</div>
+        <div className="sidebar_bottom text-xs">@copyright Romi</div>
       </div>
     </div>
   )

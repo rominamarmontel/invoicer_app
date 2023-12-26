@@ -88,13 +88,22 @@ export const POST = async(req:Request) => {
     return categoryData;
   };
 
+
   const getItemInfoByName = async (itemName: string) => {
-    const itemData = await Item.findOne({'itemName.fr': itemName
-    })
-    if (!itemData) {
-      throw new Error('Item not found')
+    try {
+      if (!itemName) {
+        return null;
+      }
+  
+      const itemData = await Item.findOne({ 'itemName.fr': itemName });
+      if (!itemData) {
+        throw new Error('Item not found');
+      }
+      return itemData;
+    } catch (error) {
+      console.error('The problem is occurred while getting the info of item:', error);
+      throw error;
     }
-    return itemData
   }
 
   const getCommissionInfoByName = async(commissionName: string) => {
@@ -106,20 +115,14 @@ export const POST = async(req:Request) => {
   }
 
   const formattedRows = await Promise.all((rows as Array<RowProps>).map(async (row) => {
-    const rowCategory = String(row.category)
+    const rowCategory = String(row.category);
     const category = await getCategoryInfoByName(rowCategory);
-    const rowItem = String(row.item)
+    const rowItem = String(row.item);
     const item = await getItemInfoByName(rowItem);
-    if (!category) {
-      throw new Error('Category not found');
-    }
-    if (!item) {
-      throw new Error('Item not found');
-    }
- 
+  
     return {
       category: category._id,
-      item: item._id,
+      item: item, 
       itemPlus: row.itemPlus,
       qty: row.qty,
       price: row.price,
@@ -127,7 +130,6 @@ export const POST = async(req:Request) => {
       total: row.total,
     };
   }));
-
 let newRows = [];
 for (let i = 0; i < formattedRows.length; i++) {
   const newRow = await Row.create({

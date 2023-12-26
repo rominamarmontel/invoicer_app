@@ -1,12 +1,11 @@
 'use client'
 
-import OneCompany from '@/components/Company/OneCompany'
-import React, { useEffect, useState } from 'react'
 import { CompanyProps } from '@/types'
+import { useEffect, useState } from 'react'
+import EditCompanyForm from '@/components/Company/EditCompanyForm'
 
-const DetailsCompany = ({ params }: { params: { id: string } }) => {
+const EditCompany = ({ params }: { params: { id: CompanyProps } }) => {
   const [company, setCompany] = useState<CompanyProps | null>(null)
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -16,7 +15,6 @@ const DetailsCompany = ({ params }: { params: { id: string } }) => {
             cache: 'no-store',
           }
         )
-
         if (res.ok) {
           const data = await res.json()
           const company = data.company
@@ -26,19 +24,14 @@ const DetailsCompany = ({ params }: { params: { id: string } }) => {
         console.log(error)
       }
     }
-
     fetchData()
   }, [params.id])
 
   return (
-    <div>
-      {company ? (
-        <OneCompany companyId={company._id} />
-      ) : (
-        <div className="loading">Loading...</div>
-      )}
-    </div>
+    <>
+      {company ? <EditCompanyForm company={company} /> : <div>Loading...</div>}
+    </>
   )
 }
 
-export default DetailsCompany
+export default EditCompany

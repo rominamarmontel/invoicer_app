@@ -18,6 +18,7 @@ export const POST = async(req:Request) => {
 
   const {
     bankName,
+    bankCode,
     accountNumber,
     bic,
     iban,
@@ -27,6 +28,7 @@ export const POST = async(req:Request) => {
   await connectMongoDB()
   const newPayment = await Payment.create({
     bankName,
+    bankCode,
     accountNumber,
     bic,
     iban,

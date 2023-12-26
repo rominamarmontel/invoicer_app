@@ -1,40 +1,13 @@
 import { CategoryProps, ItemProps, RowProps } from '@/types'
-import React, { use, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-interface OneRowProps {
-  rowId: RowProps
-}
-
-const OneRow: React.FC<OneRowProps> = ({ rowId }) => {
-  const [row, setRow] = useState<RowProps | null>(null)
+const EditRowForm = ({ row }: { row: RowProps }) => {
   const [category, setCategory] = useState<CategoryProps | null>(null)
   const [item, setItem] = useState<ItemProps | null>(null)
 
   useEffect(() => {
-    const fetchRow = async () => {
-      try {
-        const res = await fetch(`/api/rows/${rowId}`, {
-          cache: 'no-store',
-        })
-        if (res.ok) {
-          const data = await res.json()
-          const fetchedRow = await data.row
-          if (!fetchedRow) {
-            console.log('Row not found')
-            return
-          }
-          setRow(fetchedRow)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchRow()
-  }, [rowId])
-
-  useEffect(() => {
     const fetchCategory = async () => {
-      const catName = row?.category
+      const catName = row?._id
       try {
         if (!catName) {
           return
@@ -56,7 +29,7 @@ const OneRow: React.FC<OneRowProps> = ({ rowId }) => {
       }
     }
     fetchCategory()
-  }, [row?.category])
+  }, [row?._id])
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -105,14 +78,14 @@ const OneRow: React.FC<OneRowProps> = ({ rowId }) => {
       <td className="whitespace-nowrap border-r px-3 py-2 font-medium dark:border-neutral-500">
         {row && row.unit && <p>{row.unit}</p>}
       </td>
-      <td className="whitespace-nowrap border-r px-3 py-2 font-medium dark:border-neutral-500">
-        {row && row.price && <p>{row.price}</p>}
+      <td className="text-right whitespace-nowrap border-r px-3 py-2 font-medium dark:border-neutral-500">
+        {row && row.price && <p>{row.price.toFixed(2)}</p>}
       </td>
-      <td className="flex justify-end whitespace-nowrap px-3 py-2 font-medium dark:border-neutral-500">
-        {row && row.total && <p>{row.total}</p>}
+      <td className="text-right whitespace-nowrap px-3 py-2 font-medium dark:border-neutral-500">
+        {row && row.total && <p>{row.total.toFixed(2)}</p>}
       </td>
     </>
   )
 }
 
-export default OneRow
+export default EditRowForm

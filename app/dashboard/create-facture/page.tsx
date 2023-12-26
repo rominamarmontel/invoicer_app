@@ -45,7 +45,11 @@ const CreateFacture = () => {
         })
         if (res.ok) {
           const data = await res.json()
-          setClients(data)
+          if (data.clients && Array.isArray(data.clients)) {
+            setClients(data)
+          } else {
+            console.error('Invalid data format for clients:', data)
+          }
         }
       } catch (error) {
         console.log(error)

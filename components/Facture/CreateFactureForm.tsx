@@ -1,4 +1,5 @@
 'use client'
+
 import {
   CategoryProps,
   ClientProps,
@@ -8,6 +9,7 @@ import {
   PaymentProps,
   RowProps,
 } from '@/types'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -390,20 +392,41 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
       console.log(error)
     }
   }
+
   return (
-    <div className="m-5 p-5 lg:max-w-4xl lg:mx-auto bg-white rounded shadow">
-      <div className="new_invoice">
-        <div className="new_invoice-header">
-          <h2>Create a Facture</h2>
+    <div className="createFactureForm">
+      <div className="createFactureForm_container">
+        <div className="createFactureForm_header">
+          <div className="createFactureForm_header-logo">
+            <h3>Create a Facture</h3>
+          </div>
+          <Link href="/dashboard" className="flex items-center gap-2 mb-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="w-6 h-6 text-slate-400"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            <span className="text-sm text-slate-400">Return</span>
+          </Link>
         </div>
-        <form>
-          <div className="new_invoice-body">
-            {/* ================ Your company info ======================*/}
-            <div className="bill_from">
-              <p className="bill_title">BILL FROM</p>
-              <div className="form_group">
+
+        <form className="form_container">
+          <div className="flex flex-col">
+            <div className="form_group inline_form-group">
+              {/* ================ Your company info ======================*/}
+              <div className="company w-1/3">
+                <label>BILL FROM</label>
                 <select onChange={companyChange}>
-                  <option value="">Choose your company</option>
+                  <option value="-1">Choose your company</option>
                   {companies &&
                     companies.map((company: CompanyProps) => (
                       <option key={company._id} value={company.name}>
@@ -412,293 +435,281 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
                     ))}
                 </select>
               </div>
-            </div>
-            {/* ================ Client info ======================*/}
-            <div className="client">
-              <p className="client_title">BILL TO</p>
-              <div className="form_group">
+              {/* ================ Client info ======================*/}
+              <div className="client w-1/3">
+                <label>BILL TO</label>
                 <select onChange={clientChange}>
                   <option value="-1">Choose Client</option>
-                  {clients &&
+                  {clients && Array.isArray(clients) ? (
                     clients.map((client) => (
                       <option key={client._id} value={client.clientName}>
                         {client.clientName}
                       </option>
-                    ))}
+                    ))
+                  ) : (
+                    <option value="-1">Loading clients...</option>
+                  )}
                 </select>
               </div>
-            </div>
-            {/* ================ Facture date ======================*/}
-            <div className="facture_date">
-              <p className="facture_date-title">FACTURE DATE</p>
-
-              <div className="form_group">
-                <p>Facture number: generate automatically</p>
-                {factureNumber}
-                {/* <input
+              {/* ================ Facture number ======================*/}
+              <div className="facture_number w-1/3">
+                <label>FACTURE DATE</label>
+                <div>
+                  <p>Facture number: generate automatically</p>
+                  {factureNumber}
+                  {/* <input
                   type="text"
                   placeholder="Facture Number"
                   value={factureNumber}
                   readOnly
                 /> */}
-              </div>
-
-              <div className="form_group inline_form-group">
-                <div>
-                  <p>Facture date</p>
-                  <input
-                    type="date"
-                    placeholder="Facture Date"
-                    onChange={(e) => setFactureDate(e.target.value)}
-                  />
-                </div>
-
-                <div>
-                  <p>Payment Terms</p>
-                  <select
-                    onChange={(e) =>
-                      setConditionPayment(Number(e.target.value))
-                    }
-                    className=""
-                  >
-                    <option value="-1">Choose days</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="60">60</option>
-                  </select>
-                </div>
-
-                <div>
-                  <p>Payment due</p>
-                  <input
-                    type="date"
-                    placeholder="Payment due"
-                    value={paymentDue}
-                    onChange={(e) => setPaymentDue(e.target.value)}
-                  />
                 </div>
               </div>
             </div>
 
-            {/* ================ Payment ======================*/}
-            <div className="payment">
-              <p className="payment-title">Payment</p>
+            <div className="form_group inline_form-group">
+              {/* ================ Facture date ======================*/}
+              <div className="facture_date w-1/3">
+                <label>Facture date</label>
+                <input
+                  type="date"
+                  placeholder="Facture Date"
+                  onChange={(e) => setFactureDate(e.target.value)}
+                />
+              </div>
 
-              <div className="form_group">
-                <select onChange={paymentChange} className="">
-                  <option value="-1">Choose Payment</option>
-                  {payments &&
-                    payments.map((payment) => (
-                      <option key={payment._id} value={payment.bankName}>
-                        {payment.bankName}
-                      </option>
-                    ))}
+              {/* ================ Payment terms ======================*/}
+              <div className="payment_terms w-1/3">
+                <label>Payment Terms</label>
+                <select
+                  onChange={(e) => setConditionPayment(Number(e.target.value))}
+                  className=""
+                >
+                  <option value="-1">Choose days</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="30">30</option>
+                  <option value="60">60</option>
                 </select>
               </div>
-            </div>
 
-            {/* ================ Note ======================*/}
-            <div className="note">
-              <div>
-                <p className="note-title">Note (*Option)</p>
-                <textarea
-                  placeholder="note"
-                  onChange={(e) => setNote(e.target.value)}
+              {/* ================ Payment due ======================*/}
+              <div className="payment_due w-1/3">
+                <label>Payment due</label>
+                <input
+                  type="date"
+                  placeholder="Payment due"
+                  value={paymentDue}
+                  onChange={(e) => setPaymentDue(e.target.value)}
                 />
               </div>
             </div>
+          </div>
+
+          <div className="form_group inline_form-group">
+            {/* ================ Payment Moyen======================*/}
+            <div className="payment w-1/3">
+              <label>Payment Moyen</label>
+              <select onChange={paymentChange} className="">
+                <option value="-1">Choose Payment</option>
+                {payments &&
+                  payments.map((payment) => (
+                    <option key={payment._id} value={payment.bankName}>
+                      {payment.bankName}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            {/* ================ Note ======================*/}
+            <div className="note w-1/3">
+              <label>Note (*Option)</label>
+              <textarea
+                placeholder="ex) November 2023"
+                onChange={(e) => setNote(e.target.value)}
+              />
+            </div>
 
             {/* ================ Items ======================*/}
-            <div className="item_details">
-              <p className="item_details-title">ITEM LIST</p>
+            <div className="item_details w-1/3">
+              <label>ITEM LIST</label>
+              <select onChange={(e) => setTitle(e.target.value)}>
+                <option value="-1">Choose a Title</option>
+                <option value="preparation">preparation</option>
+                <option value="reperage">reperage</option>
+                <option value="tournage">tournage</option>
+              </select>
+            </div>
+          </div>
 
-              <div className="form_group inline_form-group">
-                <div>
-                  <select onChange={(e) => setTitle(e.target.value)}>
-                    <option value="-1">Choose a Title</option>
-                    <option value="preparation">preparation</option>
-                    <option value="reperage">reperage</option>
-                    <option value="tournage">tournage</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* ================ Items Details Start ======================*/}
-              <div className="rows">
-                {rows?.map((row, i) => (
-                  <div className="row" key={i}>
-                    <div className="form_group inline_form-group">
-                      <div className="form_group">
-                        <div>
-                          <select
-                            name="category"
-                            onChange={(e) => handlerChange(e, i)}
-                          >
-                            <option value="-1">Choose Category</option>
-                            {categories &&
-                              categories.map((category) => (
-                                <option
-                                  key={category._id}
-                                  value={category.catName}
-                                >
-                                  {category.catName}
-                                </option>
-                              ))}
-                          </select>
-                        </div>
-                      </div>
-
-                      <div className="form_group">
-                        <div>
-                          <select
-                            name="item"
-                            onChange={(e) => handlerChange(e, i)}
-                          >
-                            <option value="-1">Choose Item Name</option>
-                            {items &&
-                              items.map((item) => (
-                                <option key={item._id} value={item.itemName.fr}>
-                                  {item.itemName.fr}
-                                </option>
-                              ))}
-                          </select>
-                        </div>
-                      </div>
-
-                      <div className="form_group">
-                        <div>
-                          <p>You can add</p>
-                          <input
-                            name="itemPlus"
-                            type="text"
-                            placeholder="Plus"
-                            onChange={(e) => handlerChange(e, i)}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="form_group inline_form-group">
-                      <div className="form_group">
-                        <div>
-                          <p>Qty</p>
-                          <input
-                            name="qty"
-                            type="number"
-                            placeholder="Qty"
-                            onChange={(e) => handlerChange(e, i)}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form_group">
-                        <div>
-                          <p>Unit</p>
-                          <input
-                            name="unit"
-                            type="text"
-                            placeholder="unit"
-                            onChange={(e) => handlerChange(e, i)}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form_group">
-                        <div>
-                          <p>Price</p>
-                          <input
-                            name="price"
-                            type="number"
-                            placeholder="price"
-                            onChange={(e) => handlerChange(e, i)}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form_group">
-                        <div>
-                          <p>Total</p>
-                          <div>{row.total}</div>
-                        </div>
-                      </div>
-                      <button onClick={() => deleteRow(i)}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="w-6 h-6"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </button>
-                    </div>
+          {/* ================ Items Details Start ======================*/}
+          <div className="border border-stone-300 rounded bg-stone-300 p-4">
+            {rows?.map((row, i) => (
+              <>
+                <div className="form_group inline_form-group" key={i}>
+                  <div className="form_group w-2/12 mr-1" key={i}>
+                    <label>Category</label>
+                    <select
+                      name="category"
+                      onChange={(e) => handlerChange(e, i)}
+                    >
+                      <option value="-1">Choose Category</option>
+                      {categories &&
+                        categories.map((category) => (
+                          <option key={category._id} value={category.catName}>
+                            {category.catName}
+                          </option>
+                        ))}
+                    </select>
                   </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <button
-                onClick={handleAddItem}
-                className="flex items-center gap-3"
+
+                  <div className="form_group w-3/12 mr-1">
+                    <label>Item Name</label>
+                    <select name="item" onChange={(e) => handlerChange(e, i)}>
+                      <option value="-1">Choose Item Name</option>
+                      {items &&
+                        items.map((item) => (
+                          <option key={item._id} value={item.itemName.fr}>
+                            {item.itemName.fr}
+                          </option>
+                        ))}
+                    </select>
+                    <input
+                      name="itemPlus"
+                      type="text"
+                      placeholder="Enter item name"
+                      onChange={(e) => handlerChange(e, i)}
+                      className="mt-2"
+                    />
+                  </div>
+
+                  <div className="form_group w-1/12 mr-1">
+                    <label>Qty</label>
+                    <input
+                      name="qty"
+                      type="number"
+                      placeholder="ex) 1"
+                      onChange={(e) => handlerChange(e, i)}
+                    />
+                  </div>
+
+                  <div className="form_group w-1/12 mr-1">
+                    <label>Unit</label>
+                    <input
+                      name="unit"
+                      type="text"
+                      placeholder="ex) day"
+                      onChange={(e) => handlerChange(e, i)}
+                    />
+                  </div>
+
+                  <div className="form_group w-1/12 mr-1">
+                    <label>Price</label>
+                    <input
+                      name="price"
+                      type="number"
+                      placeholder="ex) 350"
+                      onChange={(e) => handlerChange(e, i)}
+                    />
+                  </div>
+
+                  <div className="form_group w-2/12">
+                    <label>Total</label>
+                    <div>{row.total}</div>
+                  </div>
+
+                  <div className="form_group w-1/12">
+                    <label>Delete</label>
+                    <button onClick={() => deleteRow(i)}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-9 h-9 text-red-400"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </>
+            ))}
+          </div>
+          <div className="flex justify-center mb-20">
+            <button
+              onClick={handleAddItem}
+              className="btn-gray flex items-center gap-3"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>{' '}
-                <p>create item</p>
-              </button>
-            </div>
-            {/* ================ Total calcul Start ======================*/}
-            <div className="create_facture-calcul flex flex-col border mt-10">
-              <div className="form_group flex items-center gap-12 justify-end">
-                <p>Subtotal</p>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>{' '}
+              <p>Add Item</p>
+            </button>
+          </div>
+          {/* ================ Total calcul Start ======================*/}
+          <div className="flex flex-col items-end">
+            <div className="calcul-container w-1/2 border border-slate-800 p-8">
+              <div className="flex justify-between border-b-2">
+                <div className="form_group">
+                  <label>Subtotal</label>
+                </div>
                 <p>{subtotal}</p>
               </div>
-              <div className="form_group flex items-center gap-12 justify-end">
-                <select onChange={commissionChange}>
-                  <option value="">Choose your commission</option>
-                  {commissions &&
-                    commissions.map((commission: CommissionProps) => (
-                      <option
-                        key={commission._id}
-                        value={commission.commissionName}
-                      >
-                        {commission.commissionName}
-                      </option>
-                    ))}
-                </select>
-                {selectedCommissionTaux !== null
-                  ? `${selectedCommissionTaux}%`
-                  : ''}
-                <div>{tauxValue}</div>
+              <div className="form_group inline_form-group gap-2 border-b-2 pt-4">
+                <div className="form_group w-2/3">
+                  <label>Commission</label>
+                  <select onChange={commissionChange}>
+                    <option value="-1">Choose your commission</option>
+                    {commissions &&
+                      commissions.map((commission: CommissionProps) => (
+                        <option
+                          key={commission._id}
+                          value={commission.commissionName}
+                        >
+                          {commission.commissionName}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+                <div className="form_group w-1/3">
+                  <label>TAUX</label>
+                  <p>
+                    {selectedCommissionTaux !== null
+                      ? `${selectedCommissionTaux}%`
+                      : ''}
+                  </p>
+                </div>
+                <p>{tauxValue}</p>
               </div>
-              <div className="form_group flex items-center gap-12 justify-end">
-                <div>All total</div>
-                <p>{allTotal}</p>
+              <div className="flex justify-between">
+                <div className="form_group">
+                  <label>All total</label>
+                </div>
+                <h2>{allTotal}</h2>
               </div>
             </div>
-            <div className="facture_btn">
-              <button className="mark_as-btn" onClick={handleSendAndSave}>
-                Send & Save
-              </button>
-            </div>
+          </div>
+          <div className="btn_container">
+            <button className="btn-black" onClick={handleSendAndSave}>
+              Create
+            </button>
           </div>
         </form>
       </div>

@@ -40,40 +40,51 @@ const EditCategoryForm = ({ category }: { category: CategoryProps }) => {
   }
 
   return (
-    <div className="m-5 p-5 lg:max-w-4xl lg:mx-auto bg-white rounded shadow">
-      <div className="editCommission_container">
-        <div className="editCommission_header flex items-center justify-between">
-          <span>
-            <Link href="/dashboard/commissions">
+    <div className="editCategoryForm">
+      <div className="editCategoryForm_container">
+        <div className="editCategoryForm_header">
+          <div className="editCategoryForm_header-logo">
+            <h3>Edit category</h3>
+          </div>
+          <Link
+            href="/dashboard/categories"
+            className="flex items-center gap-2 mb-4"
+          >
+            <div>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6"
+                className="w-6 h-6 text-slate-400"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                  d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                 />
               </svg>
-            </Link>
-          </span>
-          <h2>Edit category</h2>
+            </div>
+            <span className="text-sm text-slate-400">Return</span>
+          </Link>
         </div>
-        <form className="flex flex-col" onSubmit={handleSubmit}>
-          <div className="form_group flex flex-col">
-            <label>Commission Name</label>
-            <input
-              type="text"
-              placeholder="ex. Prod commission, TVA..."
-              onChange={(e) => setCatName(e.target.value)}
-              value={catName}
-            />
+
+        <form className="flex w-full justify-center" onSubmit={handleSubmit}>
+          <div className="flex flex-col w-2/3">
+            <div className="form_group mb-8">
+              <label>Category Name</label>
+              <input
+                type="text"
+                placeholder="ex.Production, Sejour, Frais divers..."
+                onChange={(e) => setCatName(e.target.value)}
+                value={catName}
+              />
+            </div>
+            <div className="btn_container">
+              <button className="btn">Update</button>
+            </div>
           </div>
-          <button className="btn">Update</button>
         </form>
       </div>
     </div>

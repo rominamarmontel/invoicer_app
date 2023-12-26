@@ -1,5 +1,3 @@
-'use client'
-
 import { CompanyProps } from '@/types'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -83,97 +81,127 @@ const EditCompanyForm = ({ company }: { company: CompanyProps }) => {
   }
 
   return (
-    <div className="m-5 p-5 lg:max-w-4xl lg:mx-auto bg-white rounded shadow">
-      <div className="editCompany_container">
-        <div className="editCompany_header flex items-top justify-between">
-          <span>
-            <Link href="/dashboard/companies">
+    <div className="editCompanyForm">
+      <div className="editCompanyForm_container">
+        <div className="editCompanyForm_header">
+          <div className="editCompanyForm_header-logo">
+            <h3>Edit your company info</h3>
+          </div>
+          <Link
+            href="/dashboard/companies"
+            className="flex items-center gap-2 mb-4"
+          >
+            <div>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6"
+                className="w-6 h-6 text-slate-400"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                  d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                 />
               </svg>
-            </Link>
-          </span>
-          <h2>Edit your company info</h2>
+            </div>
+            <span className="text-sm text-slate-400">Return</span>
+          </Link>
         </div>
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-          <div className="form_group flex flex-col">
-            <label>Company Name</label>
-            <input
-              type="text"
-              placeholder="Company name"
-              onChange={(e) => setName(e.target.value)}
-              value={name || ''}
-            />
-          </div>
-          <div className="form_group flex flex-col">
-            <label>Company Address</label>
-            <input
-              type="text"
-              placeholder="Company address"
-              onChange={(e) => setAdress(e.target.value)}
-              value={address || ''}
-            />
-          </div>
-          <div className="form_group inline_form-group">
-            <div className="form_group flex flex-col">
-              <label>City</label>
+
+        <form className="flex w-full justify-center" onSubmit={handleSubmit}>
+          <div className="flex flex-col w-2/3">
+            <div className="form_group mb-8">
+              <label>Company Name</label>
               <input
                 type="text"
-                placeholder="Company city name"
-                onChange={(e) => setCity(e.target.value)}
-                value={city || ''}
+                placeholder="Company name"
+                onChange={(e) => setName(e.target.value)}
+                value={name || ''}
               />
             </div>
-            <div className="form_group flex flex-col">
-              <label>Zipcode</label>
+            <div className="form_group mb-8">
+              <label>Company Address</label>
               <input
                 type="text"
-                placeholder="Company zipcode"
-                onChange={(e) => setZipcode(e.target.value)}
-                value={zipcode || ''}
+                placeholder="Company address"
+                onChange={(e) => setAdress(e.target.value)}
+                value={address || ''}
               />
             </div>
-            <div className="form_group flex flex-col">
-              <label>Country</label>
-              <input
-                type="text"
-                placeholder="Company country"
-                onChange={(e) => setCountry(e.target.value)}
-                value={country || ''}
-              />
+            <div className="form_group inline_form-group w-full">
+              <div className="form_group w-1/2 mb-4">
+                <label>City</label>
+                <input
+                  type="text"
+                  placeholder="Company city name"
+                  onChange={(e) => setCity(e.target.value)}
+                  value={city || ''}
+                />
+              </div>
+              <div className="form_group w-1/2 mb-4">
+                <label>Zipcode</label>
+                <input
+                  type="text"
+                  placeholder="Company zipcode"
+                  onChange={(e) => setZipcode(e.target.value)}
+                  value={zipcode || ''}
+                />
+              </div>
+              <div className="form_group w-1/2 mb-4">
+                <label>Country</label>
+                <input
+                  type="text"
+                  placeholder="Company country"
+                  onChange={(e) => setCountry(e.target.value)}
+                  value={country || ''}
+                />
+              </div>
             </div>
-          </div>
-          <div className="form_group inline_form-group">
-            <div className="form_group flex flex-col">
-              <label>Phone</label>
-              <input
-                type="text"
-                placeholder="Company phone number"
-                onChange={(e) => setPhone(e.target.value)}
-                value={phone || ''}
-              />
+            <div className="form_group inline_form-group w-full">
+              <div className="form_group w-1/2">
+                <label>Telephone</label>
+                <input
+                  type="text"
+                  placeholder="Company phone number"
+                  onChange={(e) => setPhone(e.target.value)}
+                  value={phone || ''}
+                />
+              </div>
+              <div className="form_group w-1/2 mb-4">
+                <label>E-mail</label>
+                <input
+                  type="text"
+                  placeholder="Company email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email || ''}
+                />
+              </div>
             </div>
-            <div className="form_group flex flex-col">
-              <label>E-mail</label>
-              <input
-                type="text"
-                placeholder="Company email"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email || ''}
-              />
+
+            <div className="form_group inline_form-group w-full">
+              <div className="form_group w-1/2 mb-4">
+                <label>TVA</label>
+                <input
+                  type="text"
+                  placeholder="Company TVA mb-4"
+                  onChange={(e) => setTva(e.target.value)}
+                  value={tva || ''}
+                />
+              </div>
+              <div className="form_group w-1/2 mb-4">
+                <label>SIRET number</label>
+                <input
+                  type="text"
+                  placeholder="Company Siret number"
+                  onChange={(e) => setSiret(e.target.value)}
+                  value={siret || ''}
+                />
+              </div>
             </div>
-            <div className="form_group flex flex-col">
+            <div className="form_group mb-8">
               <label>Website</label>
               <input
                 type="text"
@@ -182,29 +210,11 @@ const EditCompanyForm = ({ company }: { company: CompanyProps }) => {
                 value={website || ''}
               />
             </div>
-          </div>
 
-          <div className="form_group inline_form-groupA">
-            <div className="form_group flex flex-col">
-              <label>SIRET number</label>
-              <input
-                type="text"
-                placeholder="Company Siret number"
-                onChange={(e) => setSiret(e.target.value)}
-                value={siret || ''}
-              />
-            </div>
-            <div className="form_group flex flex-col">
-              <label>TVA</label>
-              <input
-                type="text"
-                placeholder="Company TVA"
-                onChange={(e) => setTva(e.target.value)}
-                value={tva || ''}
-              />
+            <div className="btn_container">
+              <button className="btn">Update</button>
             </div>
           </div>
-          <button className="btn">Update</button>
         </form>
       </div>
     </div>
