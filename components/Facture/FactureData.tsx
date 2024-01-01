@@ -22,6 +22,7 @@ const FactureData = () => {
     }
     fetchData()
   }, [])
+
   return { factures, setFactures }
 }
 

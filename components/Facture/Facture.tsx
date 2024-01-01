@@ -214,7 +214,6 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
           categoryPromises
         )
         setCategories(updatedCategories)
-        console.log(updatedCategories)
         const updatedItems = await Promise.all<ItemProps>(itemPromises)
         setItems(updatedItems)
       } catch (error) {
@@ -222,7 +221,7 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
       }
     }
     fetchRowsDetails()
-  }, [factureData?.rows])
+  }, [factureData?.rows, setCategories, setItems])
 
   /* ================ Calcul Subtotal ======================*/
   useEffect(() => {

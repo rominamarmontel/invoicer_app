@@ -1,3 +1,5 @@
+'use client'
+
 import { ItemProps } from '@/types'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'

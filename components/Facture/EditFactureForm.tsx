@@ -223,6 +223,15 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
     }
     initialValues()
   }, [
+    company,
+    client,
+    commission,
+    payment,
+    setCategories,
+    setFactureNumber,
+    setItems,
+    setPaymentDue,
+    setSelectedCommissionTaux,
     factureData?.company,
     factureData?.client,
     factureData?.payment,
