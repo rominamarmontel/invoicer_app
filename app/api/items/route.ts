@@ -5,10 +5,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/auth";
 
 export const GET = async (req: Request) => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return NextResponse.json({error: "Not authenticated"}, {status: 401})
+  }
   try {
     await connectMongoDB();
     const items = await Item.find();
-    return NextResponse.json(items);
+    return NextResponse.json({items});
   } catch (error) {
     console.error('Error fetching items:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

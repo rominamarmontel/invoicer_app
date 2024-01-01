@@ -1,26 +1,45 @@
+'use client'
+
 import { CommissionProps } from '@/types'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-const EditCommissionForm = ({
-  commission,
-}: {
-  commission: CommissionProps
-}) => {
-  console.log(commission)
+const EditCommissionForm = ({ id }: { id: string }) => {
   const [commissionName, setCommissionName] = useState('')
   const [taux, setTaux] = useState<number>(0)
   const router = useRouter()
+  const [commission, setCommission] = useState<CommissionProps | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXTAUTH_URL}/api/commissions/${id}`,
+          {
+            cache: 'no-store',
+          }
+        )
+        if (res.ok) {
+          const data = await res.json()
+          const commission = await data.commission
+          setCommission(commission)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
+  }, [id])
 
   useEffect(() => {
     const initialValues = () => {
-      setCommissionName(commission.commissionName || '')
-      setTaux(commission.taux || 0)
+      setCommissionName(commission?.commissionName || '')
+      setTaux(commission?.taux || 0)
     }
     initialValues()
-  }, [commission.commissionName, commission.taux])
+  }, [commission?.commissionName, commission?.taux])
 
   const handleSubmit = async (e: React.FocusEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -29,7 +48,7 @@ const EditCommissionForm = ({
     }
 
     try {
-      const res = await fetch(`/api/commissions/${commission._id}`, {
+      const res = await fetch(`/api/commissions/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

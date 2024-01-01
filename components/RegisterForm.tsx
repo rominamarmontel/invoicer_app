@@ -2,12 +2,12 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-hot-toast'
 
 const RegisterForm = () => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
 
   const router = useRouter()
 
@@ -15,7 +15,7 @@ const RegisterForm = () => {
     e.preventDefault()
 
     if (!name || !email || !password) {
-      setError('All fields are necessary')
+      toast.error('All fields are necessary')
       return
     }
 
@@ -29,7 +29,7 @@ const RegisterForm = () => {
       })
       const { user } = await resUserExists.json()
       if (user) {
-        setError('User already exists')
+        toast.error('User already exists')
         return
       }
 
@@ -57,30 +57,36 @@ const RegisterForm = () => {
     <>
       <div className="grid place-items-center h-screen">
         <div className="shadow-lg p-10 rounded-lg">
-          <h2 className="mb-5 font-bold">Register</h2>
+          <div className="register_header-logo">
+            <h3>Register</h3>
+          </div>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-3">
-              <input
-                onChange={(e) => setName(e.target.value)}
-                type="text"
-                placeholder="User name"
-              />
-              <input
-                onChange={(e) => setEmail(e.target.value)}
-                type="text"
-                placeholder="Email"
-              />
-              <input
-                onChange={(e) => setPassword(e.target.value)}
-                type="current-password"
-                placeholder="password"
-              />
-              <button className="bg-green-300 text-white font-bold cursor-pointer px-6 py-2">
-                Register
-              </button>
+              <div className="form_group">
+                <input
+                  onChange={(e) => setName(e.target.value)}
+                  type="text"
+                  placeholder="User name"
+                />
+              </div>
+              <div className="form_group">
+                <input
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  placeholder="Email"
+                />
+              </div>
+              <div className="form_group">
+                <input
+                  onChange={(e) => setPassword(e.target.value)}
+                  type="current-password"
+                  placeholder="password"
+                />
+              </div>
+              <div className="btn_container">
+                <button className="btn-black">Register</button>
+              </div>
             </div>
-
-            {error && <div className="text-red-500 mt-5">{error}</div>}
 
             <Link href={'/login'} className="text-sm">
               Do you have an account? {''}

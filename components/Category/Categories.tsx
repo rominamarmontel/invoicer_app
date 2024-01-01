@@ -1,14 +1,27 @@
+'use client'
+
 import { CategoryProps } from '@/types'
 import { categoryColumns } from '../../datatablesource'
 import DatatableCategory from './DatatableCategory'
+import { useState, useEffect } from 'react'
 
-const Categories = ({
-  categories,
-  setCategories,
-}: {
-  categories: CategoryProps[]
-  setCategories: React.Dispatch<React.SetStateAction<CategoryProps[]>>
-}) => {
+const Categories = () => {
+  const [categories, setCategories] = useState<CategoryProps[]>([])
+
+  useEffect(() => {
+    const fetchAllClients = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/categories`)
+        if (res.ok) {
+          const data = await res.json()
+          setCategories(data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchAllClients()
+  }, [])
   return (
     <div className="categories m-5 p-5 bg-white rounded shadow">
       <div className="categories_container">

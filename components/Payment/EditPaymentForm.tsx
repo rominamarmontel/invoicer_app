@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-const EditPaymentForm = ({ payment }: { payment: PaymentProps }) => {
+const EditPaymentForm = ({ id }: { id: string }) => {
   const [bankName, setBankName] = useState('')
   const [bankCode, setBankCode] = useState('')
   const [accountNumber, setAccountNumber] = useState('')
@@ -14,24 +14,47 @@ const EditPaymentForm = ({ payment }: { payment: PaymentProps }) => {
   const [iban, setIban] = useState('')
   const [accountName, setAccountName] = useState('')
   const router = useRouter()
+  const [payment, setPayment] = useState<PaymentProps | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXTAUTH_URL}/api/payments/${id}`,
+          {
+            cache: 'no-store',
+          }
+        )
+        if (res.ok) {
+          const data = await res.json()
+          const payment = await data.payment
+          setPayment(payment)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchData()
+  }, [id])
 
   useEffect(() => {
     const initialValues = () => {
-      setBankName(payment.bankName || '')
-      setBankCode(payment.bankCode || '')
-      setAccountNumber(payment.accountNumber || '')
-      setBic(payment.bic || '')
-      setIban(payment.iban || '')
-      setAccountName(payment.accountName || '')
+      setBankName(payment?.bankName || '')
+      setBankCode(payment?.bankCode || '')
+      setAccountNumber(payment?.accountNumber || '')
+      setBic(payment?.bic || '')
+      setIban(payment?.iban || '')
+      setAccountName(payment?.accountName || '')
     }
     initialValues()
   }, [
-    payment.bankName,
-    payment.bankCode,
-    payment.accountNumber,
-    payment.bic,
-    payment.iban,
-    payment.accountName,
+    payment?.bankName,
+    payment?.bankCode,
+    payment?.accountNumber,
+    payment?.bic,
+    payment?.iban,
+    payment?.accountName,
   ])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,7 +65,7 @@ const EditPaymentForm = ({ payment }: { payment: PaymentProps }) => {
     }
 
     try {
-      const res = await fetch(`/api/payments/${payment._id}`, {
+      const res = await fetch(`/api/payments/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

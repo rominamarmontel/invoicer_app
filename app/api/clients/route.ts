@@ -1,8 +1,14 @@
 import { connectMongoDB } from '@/lib/mongodb'
 import Client from '@/models/client'
 import { NextResponse } from 'next/server'
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "../auth/auth"
 
 export const GET = async (req: Request) => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return NextResponse.json({error: "Not authenticated"}, {status: 401})
+  }
   await connectMongoDB()
   const clients = await Client.find()
   return NextResponse.json({clients})

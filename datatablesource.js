@@ -1,5 +1,5 @@
 export const factureColumns = [
-  { field: '_id', headerName: 'ID', width: 150 },
+  { field: '_id', headerName: 'ID', width: 100 },
   {
     field: 'factureNumber',
     headerName: 'FACTURE NUMBER',

@@ -42,6 +42,7 @@ export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
     }
     return companyData;
   };
+  
 
   const getClientInfoByName = async (clientName: string) => {
       const clientData = await Client.findOne({ clientName: String(clientName) });
@@ -147,9 +148,17 @@ export const GET = async(req:Request, {params}: {params: {id:string}}) => {
   return NextResponse.json({facture}, {status: 200})
 }
 
-export const DELETE = async(req:Request,{params}:{params:{id:string}}) => {
-  const {id} = params
-  await connectMongoDB()
-  await Facture.findByIdAndDelete({_id: id})
-  return NextResponse.json({message:"Facture deleted"}, {status:200})
-}
+export const DELETE = async (req: Request, { params }: { params: { id: string } }) => {
+  const { id } = params;
+  const factureToDelete = await Facture.findById(id);
+  if (!factureToDelete) {
+    return NextResponse.json({ message: "Facture not found" }, { status: 404 });
+  }
+  const rowIdsToDelete = factureToDelete.rows;
+  await Facture.findByIdAndDelete(id);
+  if (rowIdsToDelete && rowIdsToDelete.length > 0) {
+    await Row.deleteMany({ _id: { $in: rowIdsToDelete } });
+  }
+
+  return NextResponse.json({ message: "Facture and Rows deleted" }, { status: 200 });
+};

@@ -20,10 +20,14 @@ export const POST = async (req: Request) => {
 }
 
 export const GET = async() => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return NextResponse.json({error: "Not authenticated"}, {status: 401})
+  }
   try {
     await connectMongoDB()
     const categories = await Category.find()
-    return NextResponse.json(categories)
+    return NextResponse.json({categories})
   } catch (error) {
     return NextResponse.json("Something went wrong.")
   }

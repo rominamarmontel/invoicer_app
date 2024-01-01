@@ -1,18 +1,28 @@
+'use client'
+
 import { CommissionProps } from '@/types'
-import Link from 'next/link'
-import React from 'react'
-import { LiaEditSolid } from 'react-icons/lia'
-import DeleteButtonCommission from '../DeleteButton/DeleteButtonCommission'
+import React, { useEffect, useState } from 'react'
 import DatatableCommission from './DatatableCommission'
 import { commissionColumns } from '@/datatablesource'
 
-const Commissions = ({
-  commissions,
-  setCommissions,
-}: {
-  commissions: CommissionProps[]
-  setCommissions: React.Dispatch<React.SetStateAction<CommissionProps[]>>
-}) => {
+const Commissions = () => {
+  const [commissions, setCommissions] = useState<CommissionProps[]>([])
+
+  useEffect(() => {
+    const fetchAllCommissions = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/commissions`)
+        if (res.ok) {
+          const data = await res.json()
+          setCommissions(data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchAllCommissions()
+  }, [])
+
   return (
     <div className="commissions m-5 p-5 bg-white rounded shadow">
       <div className="commissions_container">

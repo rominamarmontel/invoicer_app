@@ -5,6 +5,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { itemColumns } from '../../datatablesource'
 import { ItemProps } from '@/types'
 import DeleteButtonItem from '../DeleteButton/DeleteButtonItem'
+import ItemData from './ItemData'
 
 interface DatatableProps {
   columns: { field: string; headerName: string; width: number }[]
@@ -15,22 +16,7 @@ interface DataItemProps {
 }
 
 const DatatableItem: React.FC<DatatableProps> = ({ columns }) => {
-  const [items, setItems] = useState<ItemProps[]>([])
-
-  useEffect(() => {
-    const fetchAllItems = async () => {
-      try {
-        const res = await fetch('/api/items')
-        if (res.ok) {
-          const data = await res.json()
-          setItems(data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllItems()
-  }, [])
+  const { items, setItems } = ItemData()
 
   const actionColumn = [
     {

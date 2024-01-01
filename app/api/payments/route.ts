@@ -5,9 +5,14 @@ import { NextResponse } from "next/server"
 import { authOptions } from "../auth/auth";
 
 export const GET = async(req:Request) => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return NextResponse.json({error: "Not authenticated"}, {status: 401})
+  }
+  
   await connectMongoDB()
-  const banks = await Payment.find()
-  return NextResponse.json(banks)
+  const payments = await Payment.find()
+  return NextResponse.json({payments})
 }
 
 export const POST = async(req:Request) => {

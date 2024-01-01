@@ -1,26 +1,14 @@
-'use client'
-import React, { useState, useEffect } from 'react'
-import { CategoryProps } from '@/types'
+import { authOptions } from '@/app/api/auth/auth'
 import Categories from '@/components/Category/Categories'
+import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
 
-const GetAllCategories = () => {
-  const [categories, setCategories] = useState<CategoryProps[]>([])
-
-  useEffect(() => {
-    const fetchAllClients = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/categories`)
-        if (res.ok) {
-          const data = await res.json()
-          setCategories(data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllClients()
-  }, [])
-  return <Categories categories={categories} setCategories={setCategories} />
+const GetAllCategories = async () => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    redirect('/login')
+  }
+  return <Categories />
 }
 
 export default GetAllCategories

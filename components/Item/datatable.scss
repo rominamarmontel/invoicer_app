@@ -22,6 +22,17 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    .link:hover{
+      text-decoration: none;
+      color: white;
+      font-size: 16px;
+      font-weight: 400;
+      background-color: green;
+      border: 1px solid green;
+      padding: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   }
 
   .cellWithImg {
@@ -67,13 +78,29 @@
       border: 1px dotted rgba(0, 0, 139, 0.596);
       cursor: pointer;
     }
+    .viewButton:hover {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background-color: darkblue;
+      color: white;
+      border: 1px dotted rgba(0, 0, 139, 0.596);
+      cursor: pointer;
+    }
     .editButton {
       padding: 2px 5px;
       border-radius: 5px;
       color: rgb(23, 154, 25);
       border: 1px dotted rgba(0, 0, 139, 0.596);
       cursor: pointer;
-    }  
+    }
+    .editButton:hover {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background-color: rgb(23, 154, 25);
+      color: white;
+      border: 1px dotted rgba(0, 0, 139, 0.596);
+      cursor: pointer;
+    }
     .deleteButton {
       padding: 2px 5px;
       border-radius: 5px;

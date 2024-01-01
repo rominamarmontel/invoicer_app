@@ -1,33 +1,17 @@
 import './datatable.scss'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { DataGrid } from '@mui/x-data-grid'
 import type {} from '@mui/x-data-grid/themeAugmentation'
 import { commissionColumns } from '../../datatablesource'
-import { CommissionProps } from '@/types'
 import DeleteButtonCommission from '../DeleteButton/DeleteButtonCommission'
+import CommissionData from './CommissionData'
 
 interface DatatableProps {
   columns: { field: string; headerName: string; width: number }[]
 }
 const DatatableCommission: React.FC<DatatableProps> = ({ columns }) => {
-  const [commissions, setCommissions] = useState<CommissionProps[]>([])
-
-  useEffect(() => {
-    const fetchAllCommissions = async () => {
-      try {
-        const res = await fetch('/api/commissions')
-        if (res.ok) {
-          const data = await res.json()
-          setCommissions(data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllCommissions()
-  }, [])
-
+  const { commissions, setCommissions } = CommissionData()
   interface DataCommissionProps {
     id: string
   }
@@ -40,7 +24,7 @@ const DatatableCommission: React.FC<DatatableProps> = ({ columns }) => {
         return (
           <div className="cellAction">
             <Link
-              href={`/dashboard/commissions/${params.id}`}
+              href={`/dashboard/edit-commission/${params.id}`}
               style={{ textDecoration: 'none' }}
             >
               <div className="editButton">Edit</div>

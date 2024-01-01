@@ -1,27 +1,14 @@
-'use client'
-
-import React, { useEffect, useState } from 'react'
-import { PaymentProps } from '@/types'
+import { authOptions } from '@/app/api/auth/auth'
 import Payments from '@/components/Payment/Payments'
+import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
 
-const GetAllPayments = () => {
-  const [payments, setPayments] = useState<PaymentProps[]>([])
-
-  useEffect(() => {
-    const fetchAllPayments = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/payments`)
-        if (res.ok) {
-          const data = await res.json()
-          setPayments(data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllPayments()
-  }, [])
-  return <Payments payments={payments} setPayments={setPayments} />
+const GetAllPayments = async () => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    redirect('/login')
+  }
+  return <Payments />
 }
 
 export default GetAllPayments

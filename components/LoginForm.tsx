@@ -4,11 +4,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-hot-toast'
 
 const LoginForm = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
 
   const router = useRouter()
 
@@ -16,7 +16,7 @@ const LoginForm = () => {
     e.preventDefault()
 
     if (!email || !password) {
-      setError('Email and Password are required')
+      toast.error('Email and Password are required')
     }
     try {
       const res = await signIn('credentials', {
@@ -25,7 +25,7 @@ const LoginForm = () => {
         redirect: false,
       })
       if (res?.error) {
-        setError('Invalid credentials')
+        toast.error('Invalid credentials')
         return
       }
       router.replace('dashboard')
@@ -37,25 +37,27 @@ const LoginForm = () => {
   return (
     <div className="grid place-items-center h-screen">
       <div className="shadow-lg p-10 rounded-lg">
-        <h2 className="mb-5 font-bold">Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-3">
+        <div className="login_header-logo">
+          <h3>Login</h3>
+        </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+          <div className="form_group">
             <input
               onChange={(e) => setEmail(e.target.value)}
               type="text"
               placeholder="Email"
             />
+          </div>
+          <div className="form_group">
             <input
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               placeholder="password"
             />
-            <button className="bg-green-300 text-white font-bold cursor-pointer px-6 py-2">
-              Login
-            </button>
           </div>
-
-          {error && <div className="text-red-500 mt-5">{error}</div>}
+          <div className="btn_container">
+            <button className="btn-black">Login</button>
+          </div>
 
           <Link href={'/register'} className="text-sm">
             Do you have an account? {''}

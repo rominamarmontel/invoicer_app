@@ -26,7 +26,7 @@ const CreateCompanyForm = () => {
     }
 
     try {
-      const res = await fetch('/api/company', {
+      const res = await fetch('/api/companies', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

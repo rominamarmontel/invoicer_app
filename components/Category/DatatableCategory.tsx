@@ -5,6 +5,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import { categoryColumns } from '../../datatablesource'
 import { CategoryProps } from '@/types'
 import DeleteButtonCategory from '../DeleteButton/DeleteButtonCategory'
+import CategoryData from './CategoryData'
 
 interface DatatableProps {
   columns: { field: string; headerName: string; width: number }[]
@@ -15,22 +16,7 @@ interface DataCategoryProps {
   row: CategoryProps
 }
 const DatatableCategory: React.FC<DatatableProps> = ({ columns }) => {
-  const [categories, setCategories] = useState<CategoryProps[]>([])
-
-  useEffect(() => {
-    const fetchAllCategories = async () => {
-      try {
-        const res = await fetch('/api/categories')
-        if (res.ok) {
-          const data = await res.json()
-          setCategories(data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllCategories()
-  }, [])
+  const { categories, setCategories } = CategoryData()
 
   const actionColumn = [
     {
@@ -38,7 +24,6 @@ const DatatableCategory: React.FC<DatatableProps> = ({ columns }) => {
       headerName: 'Action',
       width: 200,
       renderCell: (params: DataCategoryProps) => {
-        console.log(params)
         return (
           <div className="cellAction">
             <Link

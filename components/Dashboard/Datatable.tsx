@@ -5,40 +5,20 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import type {} from '@mui/x-data-grid/themeAugmentation'
 import { ClientProps, FactureProps } from '@/types'
 import DeleteButtonFacture from '../DeleteButton/DeleteButtonFacture'
+import ClientData from '../Client/ClientData'
+import FactureData from '../Facture/FactureData'
 
 interface DatatableProps {
   columns: { field: string; headerName: string; width: number }[]
-  factures: FactureProps[]
-  setFactures: React.Dispatch<React.SetStateAction<FactureProps[]>>
 }
 interface DataFactureProps {
   id: string
   row: FactureProps
 }
 
-const Datatable: React.FC<DatatableProps> = ({
-  columns,
-  factures,
-  setFactures,
-}) => {
-  const [clients, setClients] = useState<ClientProps[]>([])
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/clients`, {
-          cache: 'no-store',
-        })
-        if (res.ok) {
-          const data = await res.json()
-          const clients = await data.clients
-          setClients(clients)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchData()
-  }, [])
+const Datatable: React.FC<DatatableProps> = ({ columns }) => {
+  const { clients } = ClientData()
+  const { factures, setFactures } = FactureData()
 
   const getClientName = (client: ClientProps | string): string => {
     if (typeof client === 'string') {
@@ -58,7 +38,7 @@ const Datatable: React.FC<DatatableProps> = ({
         return (
           <div className="cellAction">
             <Link
-              href={`/dashboard/factures/${params.id}`}
+              href={`/dashboard/edit-facture/${params.id}`}
               style={{ textDecoration: 'none' }}
             >
               <div className="editButton">Edit</div>

@@ -7,7 +7,7 @@ import { authOptions } from "../auth/auth";
 export const GET = async(req:Request) => {
   await connectMongoDB()
   const companies = await Company.find()
-  return NextResponse.json(companies)
+  return NextResponse.json({companies})
 }
 
 export const POST = async(req:Request) => {

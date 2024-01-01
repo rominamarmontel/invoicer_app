@@ -1,43 +1,39 @@
 'use client'
 
-import {
-  CategoryProps,
-  ClientProps,
-  CommissionProps,
-  CompanyProps,
-  ItemProps,
-  PaymentProps,
-  RowProps,
-} from '@/types'
+import { CommissionProps, CompanyProps, ItemProps, RowProps } from '@/types'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
-import { v4 as uuidv4 } from 'uuid'
+import CompanyData from '../Company/CompanyData'
+import ClientData from '../Client/ClientData'
+import PaymentData from '../Payment/PaymentData'
+import CategoryData from '../Category/CategoryData'
+import ItemData from '../Item/ItemData'
+import CommissionData from '../Commission/CommissionData'
+import FactureNumber from './FactureNumber'
+import CalculatePaymentDue from './CalculatePaymentDue '
+import CalculateSubtotal from './CalculateSubtotal'
+import CalculateAllTotal from './CalculateAllTotal'
 
-interface CreateFactureFormProps {
-  companies: CompanyProps[]
-  clients: ClientProps[]
-  payments: PaymentProps[]
-  categories: CategoryProps[]
-  items: ItemProps[]
-  commissions: CommissionProps[]
-}
+const CreateFactureForm = () => {
+  const { companies, setCompanies } = CompanyData()
+  const { clients, setClients } = ClientData()
+  const { payments, setPayments } = PaymentData()
+  const { categories, setCategories } = CategoryData()
+  const { items, setItems } = ItemData()
+  const { commissions, setCommissions } = CommissionData()
+  const { factureNumber, setFactureNumber, handleCreateFactureNumber } =
+    FactureNumber()
 
-const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
-  companies,
-  clients,
-  payments,
-  categories,
-  items,
-  commissions,
-}) => {
   const [company, setCompany] = useState('')
   const [client, setClient] = useState('')
   const [factureDate, setFactureDate] = useState('')
-  const [factureNumber, setFactureNumber] = useState('')
   const [conditionPayment, setConditionPayment] = useState(0)
-  const [paymentDue, setPaymentDue] = useState('')
+  const { paymentDue, setPaymentDue } = CalculatePaymentDue(
+    factureDate,
+    conditionPayment
+  )
   const [title, setTitle] = useState('-1')
   const [category, setCategory] = useState('')
   const [item, setItem] = useState('')
@@ -45,13 +41,17 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
   const [payment, setPayment] = useState('')
   const router = useRouter()
   const [rows, setRows] = useState<RowProps[]>([])
-  const [subtotal, setSubtotal] = useState(0)
+  const { subtotal, setSubtotal } = CalculateSubtotal(rows)
   const [commission, setCommission] = useState('')
-  const [selectedCommissionTaux, setSelectedCommissionTaux] = useState<
-    number | null
-  >(null)
-  const [tauxValue, setTauxValue] = useState<number | null>(null)
-  const [allTotal, setAllTotal] = useState(0)
+  const {
+    allTotal,
+    setAllTotal,
+    selectedCommissionTaux,
+    setSelectedCommissionTaux,
+    tauxValue,
+    setTauxValue,
+  } = CalculateAllTotal(subtotal)
+
   const [facture, setFacture] = useState({
     company: '',
     client: '',
@@ -67,68 +67,6 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
     commission: '',
     allTotal: 0,
   })
-
-  /* ================ Calcul Payment Due Date ======================*/
-  useEffect(() => {
-    const calculatePaymentDue = () => {
-      if (factureDate && conditionPayment !== 0) {
-        const factureDateObj = new Date(factureDate)
-        const daysToAdd = conditionPayment
-        const paymentDueDate = new Date(factureDateObj)
-        paymentDueDate.setDate(factureDateObj.getDate() + daysToAdd)
-        setPaymentDue(paymentDueDate.toISOString().split('T')[0])
-      }
-    }
-    calculatePaymentDue()
-  }, [factureDate, conditionPayment])
-
-  /* ================ Facture Number Generator ======================*/
-  const handleCreateFactureNumber = async () => {
-    try {
-      const res = await fetch('/api/factures', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          factureNumber,
-        }),
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        setFactureNumber(data.res.factureNumber)
-      } else {
-        console.error('Failed to create Facture')
-      }
-    } catch (error) {
-      console.error('Error creating Facture:', error)
-    }
-  }
-  useEffect(() => {
-    console.log('Updated factureNumber:', factureNumber)
-  }, [factureNumber])
-
-  /* ================ Calcul Subtotal ======================*/
-  useEffect(() => {
-    const calculateSubtotal = () => {
-      const subtotalValue = rows.reduce((acc, row) => acc + row.total, 0)
-      setSubtotal(subtotalValue)
-    }
-    calculateSubtotal()
-  }, [rows])
-
-  /* ================ Calcul all total====================*/
-  useEffect(() => {
-    const calculAllTotal = () => {
-      const selectedCommissionTauxNumber = selectedCommissionTaux || 0
-      const tauxValue = subtotal * (selectedCommissionTauxNumber * 0.01)
-      setTauxValue(tauxValue)
-      const allTotal = subtotal + tauxValue
-      setAllTotal(allTotal)
-    }
-    calculAllTotal()
-  }, [subtotal, selectedCommissionTaux, allTotal])
 
   /* ================ Company ======================*/
   const getCompanyInfoByName = async (companyName: string) => {
@@ -200,7 +138,7 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
     }
   }
 
-  /* ================ Select commission name and display taux ======================*/
+  /* ========== Select commission name and display taux =============*/
   const getCommissionInfoByName = async (commissionName: string) => {
     return {
       _id: 'someObjectId',
@@ -298,7 +236,7 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
     setRows([
       ...rows,
       {
-        _id: uuidv4(),
+        _id: '',
         category: { _id: '_id', catName: 'catName' },
         item: {
           _id: '_id',
@@ -313,7 +251,14 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
     ])
   }
 
-  /* ================ handlerChange ======================*/
+  /* ================ handlerChange (row)======================*/
+  const [selectedItemInfo, setSelectedItemInfo] = useState<
+    (ItemProps | null)[]
+  >(Array(rows.length).fill(null))
+  const [rowErrors, setRowErrors] = useState<Array<boolean>>(
+    Array(rows.length).fill(false)
+  )
+
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     i: number
@@ -335,10 +280,26 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
 
     list[i]['total'] = list[i]['qty'] * list[i]['price']
     setRows(list)
+
+    if (name === 'item') {
+      const selectedItemName = value
+      const selectedItem = items.find(
+        (item) => item.itemName.fr === selectedItemName
+      )
+
+      setSelectedItemInfo((prevSelected) => {
+        const updatedSelected: (ItemProps | null)[] = [...(prevSelected || [])]
+        updatedSelected[i] = selectedItem || null
+        return updatedSelected
+      })
+    }
   }
+
+  /* ================ Handle Add row ======================*/
   const handleAddItem = (e: React.MouseEvent) => {
     e.preventDefault()
     addRow()
+    setSelectedItemInfo((prevSelected) => [...prevSelected, null])
   }
 
   /* ================ Delete row ======================*/
@@ -350,6 +311,70 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
   /* ================ handleSendAndSave ======================*/
   const handleSendAndSave = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!company) {
+      toast.error('Please select a COMPANY.')
+      return
+    }
+    if (!client) {
+      toast.error('Please select a CLIENT.')
+      return
+    }
+    if (!factureDate) {
+      toast.error('Please select a FACTURE DATE.')
+      return
+    }
+    if (!paymentDue) {
+      toast.error('Please select a PAYMENT TERMS.')
+      return
+    }
+    if (!payment) {
+      toast.error('Please select a PAYMENT MOYEN.')
+      return
+    }
+    if (!title) {
+      toast.error('Please select a TITLE LIST.')
+      return
+    }
+    if (rows.length === 0) {
+      toast.error('Please add at least one row.')
+      return
+    }
+
+    const rowsValidation = rows.every((row, index) => {
+      if (!row.category) {
+        toast.error(`Please select a CATEGORY for row ${index + 1}.`)
+        return false
+      }
+
+      if (!row.item) {
+        toast.error(`Please select an DESCRIPTION for row ${index + 1}.`)
+        return false
+      }
+
+      if (!row.qty || row.qty <= 0 || isNaN(row.qty)) {
+        toast.error(`Please enter a valid quantity for row ${index + 1}.`)
+        return false
+      }
+
+      if (!row.unit || row.unit === 'string') {
+        toast.error(`Please enter a valid unite for row ${index + 1}.`)
+        return false
+      }
+
+      if (!row.price || row.price <= 0 || isNaN(row.qty)) {
+        toast.error(`Please enter a valid price for row ${index + 1}.`)
+        return false
+      }
+      return true
+    })
+    if (!commission) {
+      toast.error('Please select a COMMISSION.')
+      return
+    }
+
+    if (!rowsValidation) {
+      return
+    }
 
     const formattedRows = rows.map((row) => {
       return {
@@ -384,12 +409,17 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
         }),
       })
       if (res.ok) {
-        toast.success('Update Facture successfully')
+        toast.success('Create Facture successfully')
         router.push('/dashboard')
         router.refresh()
+      } else {
+        const errorData = await res.json()
+        toast.error(`Failed to create Facture: ${errorData.error}`)
       }
     } catch (error) {
       console.log(error)
+      const errorMessage = (error as Error)?.message || 'Internal Server Error'
+      toast.error(`Failed to create Facture: ${errorMessage}`)
     }
   }
 
@@ -405,13 +435,13 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke-width="1.5"
+              strokeWidth="1.5"
               stroke="currentColor"
               className="w-6 h-6 text-slate-400"
             >
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
               />
             </svg>
@@ -419,96 +449,81 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
           </Link>
         </div>
 
-        <form className="form_container">
-          <div className="flex flex-col">
-            <div className="form_group inline_form-group">
-              {/* ================ Your company info ======================*/}
-              <div className="company w-1/3">
-                <label>BILL FROM</label>
-                <select onChange={companyChange}>
-                  <option value="-1">Choose your company</option>
-                  {companies &&
-                    companies.map((company: CompanyProps) => (
-                      <option key={company._id} value={company.name}>
-                        {company.name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-              {/* ================ Client info ======================*/}
-              <div className="client w-1/3">
-                <label>BILL TO</label>
-                <select onChange={clientChange}>
-                  <option value="-1">Choose Client</option>
-                  {clients && Array.isArray(clients) ? (
-                    clients.map((client) => (
-                      <option key={client._id} value={client.clientName}>
-                        {client.clientName}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="-1">Loading clients...</option>
-                  )}
-                </select>
-              </div>
-              {/* ================ Facture number ======================*/}
-              <div className="facture_number w-1/3">
-                <label>FACTURE DATE</label>
-                <div>
-                  <p>Facture number: generate automatically</p>
-                  {factureNumber}
-                  {/* <input
-                  type="text"
-                  placeholder="Facture Number"
-                  value={factureNumber}
-                  readOnly
-                /> */}
-                </div>
+        <form className="w-full">
+          <div className="w-1/2">
+            {/* ================ Your company info ======================*/}
+            <div className="form_group w-1/2 mb-4">
+              <label>BILL FROM</label>
+              <select onChange={companyChange}>
+                <option value="-1">Choose your company</option>
+                {companies &&
+                  companies.map((company: CompanyProps) => (
+                    <option key={company._id} value={company.name}>
+                      {company.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+            {/* ================ Client info ======================*/}
+            <div className="form_group w-1/2 mb-4">
+              <label>BILL TO</label>
+              <select onChange={clientChange}>
+                <option value="-1">Choose Client</option>
+                {clients && Array.isArray(clients) ? (
+                  clients.map((client) => (
+                    <option key={client._id} value={client.clientName}>
+                      {client.clientName}
+                    </option>
+                  ))
+                ) : (
+                  <option value="-1">Loading clients...</option>
+                )}
+              </select>
+            </div>
+
+            {/* ================ Facture number ======================*/}
+            <div className="form_group mb-4">
+              <label>FACTURE NUMBER</label>
+              <div>
+                <p>Facture number: generate automatically</p>
+                {factureNumber}
               </div>
             </div>
 
-            <div className="form_group inline_form-group">
-              {/* ================ Facture date ======================*/}
-              <div className="facture_date w-1/3">
-                <label>Facture date</label>
-                <input
-                  type="date"
-                  placeholder="Facture Date"
-                  onChange={(e) => setFactureDate(e.target.value)}
-                />
-              </div>
-
-              {/* ================ Payment terms ======================*/}
-              <div className="payment_terms w-1/3">
-                <label>Payment Terms</label>
-                <select
-                  onChange={(e) => setConditionPayment(Number(e.target.value))}
-                  className=""
-                >
-                  <option value="-1">Choose days</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="30">30</option>
-                  <option value="60">60</option>
-                </select>
-              </div>
-
-              {/* ================ Payment due ======================*/}
-              <div className="payment_due w-1/3">
-                <label>Payment due</label>
-                <input
-                  type="date"
-                  placeholder="Payment due"
-                  value={paymentDue}
-                  onChange={(e) => setPaymentDue(e.target.value)}
-                />
-              </div>
+            {/* ================ Facture date ======================*/}
+            <div className="form_group w-1/2 mb-4">
+              <label>Facture date</label>
+              <input
+                type="date"
+                placeholder="Facture Date"
+                onChange={(e) => setFactureDate(e.target.value)}
+                className="input-factureDate"
+              />
             </div>
-          </div>
 
-          <div className="form_group inline_form-group">
+            {/* ================ Payment terms ======================*/}
+            <div className="form_group w-1/2 mb-4">
+              <label>Payment Terms</label>
+              <select
+                onChange={(e) => setConditionPayment(Number(e.target.value))}
+                className=""
+              >
+                <option value="-1">Choose days</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="60">60</option>
+              </select>
+            </div>
+
+            {/* ================ Payment due ======================*/}
+            <div className="form_group w-1/2 mb-4">
+              <label>Payment due</label>
+              <div className="text-center py-2">{paymentDue}</div>
+            </div>
+
             {/* ================ Payment Moyen======================*/}
-            <div className="payment w-1/3">
+            <div className="form_group w-1/2 mb-4">
               <label>Payment Moyen</label>
               <select onChange={paymentChange} className="">
                 <option value="-1">Choose Payment</option>
@@ -521,126 +536,174 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
               </select>
             </div>
 
-            {/* ================ Note ======================*/}
-            <div className="note w-1/3">
-              <label>Note (*Option)</label>
-              <textarea
-                placeholder="ex) November 2023"
-                onChange={(e) => setNote(e.target.value)}
-              />
-            </div>
-
-            {/* ================ Items ======================*/}
-            <div className="item_details w-1/3">
-              <label>ITEM LIST</label>
+            {/* ================ Title ======================*/}
+            <div className="form_group w-1/2 mb-4">
+              <label>TITLE LIST</label>
               <select onChange={(e) => setTitle(e.target.value)}>
                 <option value="-1">Choose a Title</option>
-                <option value="preparation">preparation</option>
-                <option value="reperage">reperage</option>
-                <option value="tournage">tournage</option>
+                <option value="preparation">Preparation</option>
+                <option value="reperage">Reperage</option>
+                <option value="tournage">Tournage</option>
               </select>
             </div>
           </div>
 
           {/* ================ Items Details Start ======================*/}
-          <div className="border border-stone-300 rounded bg-stone-300 p-4">
-            {rows?.map((row, i) => (
-              <>
-                <div className="form_group inline_form-group" key={i}>
-                  <div className="form_group w-2/12 mr-1" key={i}>
-                    <label>Category</label>
-                    <select
-                      name="category"
-                      onChange={(e) => handlerChange(e, i)}
+          <div className="my-8 min-full">
+            <table className="tablelayout w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                {/* ================ Note ======================*/}
+                <tr>
+                  <th scope="col" className="px-1 py-1">
+                    <input
+                      name="note"
+                      type="string"
+                      placeholder="ex. November 2023"
+                      onChange={(e) => setNote(e.target.value)}
+                    />
+                  </th>
+                </tr>
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    <p>Category</p>
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    <p>
+                      Description
+                      <br />
+                      (French)
+                    </p>
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    <p>
+                      Description
+                      <br />
+                      (Japanese)
+                    </p>
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    <p>Qty</p>
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    <p>Unité</p>
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    <p>Prix uni</p>
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    <p>Montant</p>
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    <span className="sr-only">Edit</span>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody className="w-full">
+                {rows?.map((row, i) => (
+                  <tr
+                    key={i}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
+                    {/* ================ Category ======================*/}
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
-                      <option value="-1">Choose Category</option>
-                      {categories &&
-                        categories.map((category) => (
-                          <option key={category._id} value={category.catName}>
-                            {category.catName}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
-                  <div className="form_group w-3/12 mr-1">
-                    <label>Item Name</label>
-                    <select name="item" onChange={(e) => handlerChange(e, i)}>
-                      <option value="-1">Choose Item Name</option>
-                      {items &&
-                        items.map((item) => (
-                          <option key={item._id} value={item.itemName.fr}>
-                            {item.itemName.fr}
-                          </option>
-                        ))}
-                    </select>
-                    <input
-                      name="itemPlus"
-                      type="text"
-                      placeholder="Enter item name"
-                      onChange={(e) => handlerChange(e, i)}
-                      className="mt-2"
-                    />
-                  </div>
-
-                  <div className="form_group w-1/12 mr-1">
-                    <label>Qty</label>
-                    <input
-                      name="qty"
-                      type="number"
-                      placeholder="ex) 1"
-                      onChange={(e) => handlerChange(e, i)}
-                    />
-                  </div>
-
-                  <div className="form_group w-1/12 mr-1">
-                    <label>Unit</label>
-                    <input
-                      name="unit"
-                      type="text"
-                      placeholder="ex) day"
-                      onChange={(e) => handlerChange(e, i)}
-                    />
-                  </div>
-
-                  <div className="form_group w-1/12 mr-1">
-                    <label>Price</label>
-                    <input
-                      name="price"
-                      type="number"
-                      placeholder="ex) 350"
-                      onChange={(e) => handlerChange(e, i)}
-                    />
-                  </div>
-
-                  <div className="form_group w-2/12">
-                    <label>Total</label>
-                    <div>{row.total}</div>
-                  </div>
-
-                  <div className="form_group w-1/12">
-                    <label>Delete</label>
-                    <button onClick={() => deleteRow(i)}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-9 h-9 text-red-400"
+                      <select
+                        name="category"
+                        onChange={(e) => handlerChange(e, i)}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </>
-            ))}
+                        <option value="-1">Choose Category</option>
+                        {categories &&
+                          categories.map((category) => (
+                            <option key={category._id} value={category.catName}>
+                              {category.catName}
+                            </option>
+                          ))}
+                      </select>
+                    </th>
+                    {/* ================ itemName.fr ======================*/}
+                    <td className="px-2 py-2">
+                      <select name="item" onChange={(e) => handlerChange(e, i)}>
+                        <option value="-1">Choose Item Name</option>
+                        {items &&
+                          items.map((item) => (
+                            <option key={item._id} value={item.itemName.fr}>
+                              {item.itemName.fr}
+                            </option>
+                          ))}
+                      </select>
+                    </td>
+                    {/* ================ itemName.jp ======================*/}
+                    <td className="px-2 py-2 text-xs">
+                      {selectedItemInfo[i] && selectedItemInfo[i]?.itemName ? (
+                        <p>{selectedItemInfo[i]?.itemName.jp}</p>
+                      ) : (
+                        <p>No Japanese name available</p>
+                      )}
+                    </td>
+
+                    {/* ================ Qty ======================*/}
+                    <td className="px-2 py-2">
+                      <input
+                        name="qty"
+                        type="number"
+                        placeholder="ex.1"
+                        onChange={(e) => handlerChange(e, i)}
+                      />
+                    </td>
+
+                    {/* ================ Unit ======================*/}
+                    <td className="px-2 py-2">
+                      <input
+                        name="unit"
+                        type="text"
+                        placeholder="ex. day"
+                        onChange={(e) => handlerChange(e, i)}
+                      />
+                    </td>
+
+                    {/* ================ Price ======================*/}
+                    <td className="px-1 py-1">
+                      <input
+                        name="price"
+                        type="number"
+                        placeholder="ex. 350"
+                        onChange={(e) => handlerChange(e, i)}
+                      />
+                    </td>
+
+                    {/* ================ Total ======================*/}
+                    <td className="px-1 py-1">
+                      <p className="text-right">{row.total.toFixed(2)}</p>
+                    </td>
+
+                    {/* ================ Delete Button ======================*/}
+                    <td className="px-2 py-2">
+                      <button onClick={() => deleteRow(i)}>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="w-6 h-6 text-red-400 text-center"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+
           <div className="flex justify-center mb-20">
             <button
               onClick={handleAddItem}
@@ -663,6 +726,7 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
               <p>Add Item</p>
             </button>
           </div>
+
           {/* ================ Total calcul Start ======================*/}
           <div className="flex flex-col items-end">
             <div className="calcul-container w-1/2 border border-slate-800 p-8">
@@ -670,7 +734,7 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
                 <div className="form_group">
                   <label>Subtotal</label>
                 </div>
-                <p>{subtotal}</p>
+                <p>{subtotal.toFixed(2)}</p>
               </div>
               <div className="form_group inline_form-group gap-2 border-b-2 pt-4">
                 <div className="form_group w-2/3">
@@ -696,13 +760,13 @@ const CreateFactureForm: React.FC<CreateFactureFormProps> = ({
                       : ''}
                   </p>
                 </div>
-                <p>{tauxValue}</p>
+                <p>{tauxValue?.toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
                 <div className="form_group">
                   <label>All total</label>
                 </div>
-                <h2>{allTotal}</h2>
+                <h2>{allTotal.toFixed(2)}</h2>
               </div>
             </div>
           </div>

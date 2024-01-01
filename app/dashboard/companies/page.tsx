@@ -1,29 +1,15 @@
-'use client'
-import { CompanyProps } from '@/types'
-import React, { useEffect, useState } from 'react'
 import Companies from '@/components/Company/Companies'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/auth'
+import { redirect } from 'next/navigation'
 
-const GetAllCompanies = () => {
-  const [companies, setCompanies] = useState<CompanyProps[]>([])
+const GetAllCompanies = async () => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    redirect('/login')
+  }
 
-  useEffect(() => {
-    const fetchAllCompanies = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/companies`, {
-          cache: 'no-store',
-        })
-        if (res.ok) {
-          const data = await res.json()
-          setCompanies(data.companies)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllCompanies()
-  }, [])
-
-  return <Companies companies={companies} setCompanies={setCompanies} />
+  return <Companies />
 }
 
 export default GetAllCompanies

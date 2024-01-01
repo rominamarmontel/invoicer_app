@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "../../auth/auth"
 import { connectMongoDB } from "@/lib/mongodb"
 import Company from "@/models/company"
+import { Types } from 'mongoose';
 
 export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
   const session = await getServerSession(authOptions)

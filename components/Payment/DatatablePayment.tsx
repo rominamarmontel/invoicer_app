@@ -1,32 +1,17 @@
 import './datatable.scss'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { DataGrid } from '@mui/x-data-grid'
 import type {} from '@mui/x-data-grid/themeAugmentation'
 import { paymentColumns } from '../../datatablesource'
-import { PaymentProps } from '@/types'
 import DeleteButtonPayment from '../DeleteButton/DeleteButtonPayment'
+import PaymentData from './PaymentData'
 
 interface DatatableProps {
   columns: { field: string; headerName: string; width: number }[]
 }
 const DatatablePayment: React.FC<DatatableProps> = ({ columns }) => {
-  const [payments, setPayments] = useState<PaymentProps[]>([])
-
-  useEffect(() => {
-    const fetchAllPayments = async () => {
-      try {
-        const res = await fetch('/api/payments')
-        if (res.ok) {
-          const data = await res.json()
-          setPayments(data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllPayments()
-  }, [])
+  const { payments, setPayments } = PaymentData()
 
   interface DataPaymentProps {
     id: string
@@ -40,7 +25,7 @@ const DatatablePayment: React.FC<DatatableProps> = ({ columns }) => {
         return (
           <div className="cellAction">
             <Link
-              href={`/dashboard/payments/${params.id}`}
+              href={`/dashboard/edit-payment/${params.id}`}
               style={{ textDecoration: 'none' }}
             >
               <div className="editButton">Edit</div>

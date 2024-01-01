@@ -1,17 +1,30 @@
+'use client'
+
 import { CompanyProps } from '@/types'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import DatatableCompany from './DatatableCompany'
 import { companyColumns } from '@/datatablesource'
-interface DatatableProps {
-  columns: { field: string; headerName: string; width: number }[]
-}
-const Companies = ({
-  companies,
-  setCompanies,
-}: {
-  companies: CompanyProps[]
-  setCompanies: React.Dispatch<React.SetStateAction<CompanyProps[]>>
-}) => {
+
+const Companies = () => {
+  const [companies, setCompanies] = useState<CompanyProps[]>([])
+
+  useEffect(() => {
+    const fetchAllCompanies = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/companies`, {
+          cache: 'no-store',
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setCompanies(data.companies)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchAllCompanies()
+  }, [])
+
   return (
     <div className="companies">
       <div className="companies_container">

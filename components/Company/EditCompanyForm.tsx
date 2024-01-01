@@ -1,10 +1,12 @@
+'use client'
+
 import { CompanyProps } from '@/types'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-const EditCompanyForm = ({ company }: { company: CompanyProps }) => {
+const EditCompanyForm = ({ id }: { id: string }) => {
   const [name, setName] = useState('')
   const [address, setAdress] = useState('')
   const [zipcode, setZipcode] = useState('')
@@ -15,33 +17,55 @@ const EditCompanyForm = ({ company }: { company: CompanyProps }) => {
   const [website, setWebsite] = useState('')
   const [siret, setSiret] = useState('')
   const [tva, setTva] = useState('')
+  const [company, setCompany] = useState<CompanyProps | null>(null)
   const router = useRouter()
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXTAUTH_URL}/api/companies/${id}`,
+          {
+            cache: 'no-store',
+          }
+        )
+        if (res.ok) {
+          const data = await res.json()
+          const company = data.company
+          setCompany(company)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
+  }, [id])
+
+  useEffect(() => {
     const initialValues = () => {
-      setName(company.name || '')
-      setAdress(company.address || '')
-      setZipcode(company.zipcode || '')
-      setCity(company.city || '')
-      setCountry(company.country || '')
-      setPhone(company.phone || '')
-      setEmail(company.email || '')
-      setWebsite(company.website || '')
-      setSiret(company.siret || '')
-      setTva(company.tva || '')
+      setName(company?.name || '')
+      setAdress(company?.address || '')
+      setZipcode(company?.zipcode || '')
+      setCity(company?.city || '')
+      setCountry(company?.country || '')
+      setPhone(company?.phone || '')
+      setEmail(company?.email || '')
+      setWebsite(company?.website || '')
+      setSiret(company?.siret || '')
+      setTva(company?.tva || '')
     }
     initialValues()
   }, [
-    company.name,
-    company.address,
-    company.zipcode,
-    company.city,
-    company.country,
-    company.phone,
-    company.email,
-    company.website,
-    company.siret,
-    company.tva,
+    company?.name,
+    company?.address,
+    company?.zipcode,
+    company?.city,
+    company?.country,
+    company?.phone,
+    company?.email,
+    company?.website,
+    company?.siret,
+    company?.tva,
   ])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,7 +76,7 @@ const EditCompanyForm = ({ company }: { company: CompanyProps }) => {
     }
 
     try {
-      const res = await fetch(`/api/companies/${company._id}`, {
+      const res = await fetch(`/api/companies/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

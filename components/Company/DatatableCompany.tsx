@@ -1,32 +1,16 @@
 import './datatable.scss'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { DataGrid } from '@mui/x-data-grid'
 import { companyColumns } from '../../datatablesource'
 import DeleteButtonCompany from '../DeleteButton/DeleteButtonCompany'
-import { CompanyProps } from '@/types'
+import CompanyData from './CompanyData'
 
 interface DatatableProps {
   columns: { field: string; headerName: string; width: number }[]
 }
 const DatatableCompany: React.FC<DatatableProps> = ({ columns }) => {
-  const [companies, setCompanies] = useState<CompanyProps[]>([])
-
-  useEffect(() => {
-    const fetchAllCompanies = async () => {
-      try {
-        const res = await fetch('/api/companies')
-        if (res.ok) {
-          const data = await res.json()
-          setCompanies(data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllCompanies()
-  }, [])
-
+  const { companies, setCompanies } = CompanyData()
   interface DataCompanyProps {
     id: string
   }
@@ -39,7 +23,7 @@ const DatatableCompany: React.FC<DatatableProps> = ({ columns }) => {
         return (
           <div className="cellAction">
             <Link
-              href={`/dashboard/companies/${params.id}`}
+              href={`/dashboard/edit-company/${params.id}`}
               style={{ textDecoration: 'none' }}
             >
               <div className="editButton">Edit</div>

@@ -6,7 +6,7 @@ import CreateClientForm from '@/components/Client/CreateClientForm'
 const createClient = async () => {
   const session = await getServerSession(authOptions)
   if (!session) {
-    redirect('/sign-in')
+    redirect('/login')
   }
   return <CreateClientForm />
 }

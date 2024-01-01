@@ -1,32 +1,16 @@
 import './datatable.scss'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { clientColumns } from '../../datatablesource'
-import { ClientProps } from '@/types'
 import DeleteButtonClient from '../DeleteButton/DeleteButtonClient'
+import ClientData from './ClientData'
 
 interface DatatableProps {
   columns: { field: string; headerName: string; width: number }[]
 }
 const DatatableClient: React.FC<DatatableProps> = ({ columns }) => {
-  const [clients, setClients] = useState<ClientProps[]>([])
-
-  useEffect(() => {
-    const fetchAllClients = async () => {
-      try {
-        const res = await fetch('/api/clients')
-        if (res.ok) {
-          const data = await res.json()
-          setClients(data.clients)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllClients()
-  }, [])
-
+  const { clients, setClients } = ClientData()
   interface DataClientProps {
     id: string
   }
@@ -39,7 +23,7 @@ const DatatableClient: React.FC<DatatableProps> = ({ columns }) => {
         return (
           <div className="cellAction">
             <Link
-              href={`/dashboard/clients/${params.id}`}
+              href={`/dashboard/edit-client/${params.id}`}
               style={{ textDecoration: 'none' }}
             >
               <div className="editButton">Edit</div>

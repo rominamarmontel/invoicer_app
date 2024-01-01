@@ -1,6 +1,4 @@
 import Link from 'next/link'
-import imageAccount from '@/public/images/computer-icons-google-account-icon-design-login-png-favpng-jFjxPac6saRuDE3LiyqsYTEZM.jpg'
-import Image from 'next/image'
 import { signOut } from 'next-auth/react'
 
 const Sidebar = () => {
@@ -11,6 +9,10 @@ const Sidebar = () => {
           <div className="sidebar_header-logo">
             <h2>Actarus Sarl</h2>
           </div>
+          <div className="sidebar_header-logo-barcode">
+            <h2>Actarus Sarl</h2>
+          </div>
+
           <ul className="sidebar_list">
             <li>
               <Link href="/dashboard">
@@ -48,11 +50,12 @@ const Sidebar = () => {
               </Link>
             </li>
           </ul>
-          <button onClick={() => signOut()} className="btn w-32">
+        </div>
+        <div className="btn_container">
+          <button onClick={() => signOut()} className="btn w-32 mb-10">
             Sign Out
           </button>
         </div>
-        <div className="sidebar_bottom text-xs">@copyright Romi</div>
       </div>
     </div>
   )

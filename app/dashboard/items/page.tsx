@@ -1,28 +1,14 @@
-'use client'
-
-import React, { useEffect, useState } from 'react'
-import { ItemProps, PaymentProps } from '@/types'
-import Payments from '@/components/Payment/Payments'
+import { authOptions } from '@/app/api/auth/auth'
 import Items from '@/components/Item/Items'
+import { getServerSession } from 'next-auth'
+import { redirect } from 'next/navigation'
 
-const GetAllItems = () => {
-  const [items, setItems] = useState<ItemProps[]>([])
-
-  useEffect(() => {
-    const fetchAllItems = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/items`)
-        if (res.ok) {
-          const data = await res.json()
-          setItems(data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchAllItems()
-  }, [])
-  return <Items items={items} setItems={setItems} />
+const GetAllItems = async () => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    redirect('/login')
+  }
+  return <Items />
 }
 
 export default GetAllItems

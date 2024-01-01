@@ -9,8 +9,8 @@ export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
   if (!session) {
     return NextResponse.json({error: "Not authenticated"}, {status: 401})
   }
+  
   const {id} = params
-
   const {
     itemName
   } = await req.json()
@@ -26,6 +26,11 @@ export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
 }
 
 export const GET = async (req:Request,{params}:{params: {id:string}}) => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return NextResponse.json({error: "Not authenticated"}, {status: 401})
+  }
+
   const {id} = params
   await connectMongoDB()
   const item = await Item.findOne({_id: id})

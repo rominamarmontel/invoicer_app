@@ -13,11 +13,10 @@ export const authOptions: AuthOptions = {
       },
 
       async authorize(credentials: any, req) {
-       const {email, password} = credentials
+        const {email, password} = credentials
        try {
         await connectMongoDB()
         const user = await User.findOne({email})
-
         if (!user) {
           return null
         }
@@ -38,6 +37,6 @@ export const authOptions: AuthOptions = {
   },
   secret:process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/login'
+    signIn: '/register'
   }
 }

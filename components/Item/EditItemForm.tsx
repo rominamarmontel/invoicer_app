@@ -4,23 +4,42 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-const EditItemForm = ({ item }: { item: ItemProps }) => {
+const EditItemForm = ({ id }: { id: string }) => {
   const [itemNames, setItemNames] = useState<{ fr: string; jp: string }>({
     fr: '',
     jp: '',
   })
   const router = useRouter()
+  const [item, setItem] = useState<ItemProps | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/items/${id}`, {
+          cache: 'no-store',
+        })
+        if (res.ok) {
+          const data = await res.json()
+          const item = await data.item
+          setItem(item)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
+  }, [id])
 
   useEffect(() => {
     const initialValues = () => {
-      if (typeof item.itemName === 'string') {
+      if (typeof item?.itemName === 'string') {
         setItemNames({ fr: '', jp: '' })
       } else {
-        setItemNames(item.itemName || { fr: '', jp: '' })
+        setItemNames(item?.itemName || { fr: '', jp: '' })
       }
     }
     initialValues()
-  }, [item.itemName])
+  }, [item?.itemName])
 
   const handleSubmit = async (e: React.FocusEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -29,7 +48,7 @@ const EditItemForm = ({ item }: { item: ItemProps }) => {
     }
 
     try {
-      const res = await fetch(`/api/items/${item._id}`, {
+      const res = await fetch(`/api/items/${item?._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

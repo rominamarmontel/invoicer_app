@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
-const EditClientForm = ({ client }: { client: ClientProps }) => {
+const EditClientForm = ({ id }: { id: string }) => {
   const [clientName, setClientName] = useState('')
   const [personName, setPersonName] = useState('')
   const [clientAddress, setClientAdress] = useState('')
@@ -19,34 +19,58 @@ const EditClientForm = ({ client }: { client: ClientProps }) => {
   const [clientSiret, setClientSiret] = useState('')
   const [clientTva, setClientTva] = useState('')
   const router = useRouter()
+  const [client, setClient] = useState<ClientProps | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXTAUTH_URL}/api/clients/${id}`,
+          {
+            cache: 'no-store',
+          }
+        )
+
+        if (res.ok) {
+          const data = await res.json()
+          const client = data.client
+          setClient(client)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchData()
+  }, [id])
 
   useEffect(() => {
     const initialValues = () => {
-      setClientName(client.clientName || '')
-      setPersonName(client.personName || '')
-      setClientAdress(client.clientAddress || '')
-      setClientZipcode(client.clientZipcode || '')
-      setClientCity(client.clientCity || '')
-      setClientCountry(client.clientCountry || '')
-      setClientPhone(client.clientPhone || '')
-      setClientEmail(client.clientEmail || '')
-      setClientWebsite(client.clientWebsite || '')
-      setClientSiret(client.clientSiret || '')
-      setClientTva(client.clientTva || '')
+      setClientName(client?.clientName || '')
+      setPersonName(client?.personName || '')
+      setClientAdress(client?.clientAddress || '')
+      setClientZipcode(client?.clientZipcode || '')
+      setClientCity(client?.clientCity || '')
+      setClientCountry(client?.clientCountry || '')
+      setClientPhone(client?.clientPhone || '')
+      setClientEmail(client?.clientEmail || '')
+      setClientWebsite(client?.clientWebsite || '')
+      setClientSiret(client?.clientSiret || '')
+      setClientTva(client?.clientTva || '')
     }
     initialValues()
   }, [
-    client.clientName,
-    client.personName,
-    client.clientAddress,
-    client.clientCity,
-    client.clientZipcode,
-    client.clientCountry,
-    client.clientPhone,
-    client.clientEmail,
-    client.clientWebsite,
-    client.clientSiret,
-    client.clientTva,
+    client?.clientName,
+    client?.personName,
+    client?.clientAddress,
+    client?.clientCity,
+    client?.clientZipcode,
+    client?.clientCountry,
+    client?.clientPhone,
+    client?.clientEmail,
+    client?.clientWebsite,
+    client?.clientSiret,
+    client?.clientTva,
   ])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,7 +81,7 @@ const EditClientForm = ({ client }: { client: ClientProps }) => {
     }
 
     try {
-      const res = await fetch(`/api/clients/${client._id}`, {
+      const res = await fetch(`/api/clients/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

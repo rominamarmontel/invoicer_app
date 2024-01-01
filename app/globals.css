@@ -4,6 +4,9 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 /* ultraLight truetype=ttf*/
 @font-face {
@@ -30,6 +33,27 @@
 @font-face {
   font-family: "myfont-heavy";
   src: url("../public/helvetica-neue-55-cdnfonts/HelveticaNeue-HeavyCond.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+/* Playfair truetype=ttf*/
+@font-face {
+  font-family: "myfont-playfair-italic";
+  src: url("../public/Playfair/Playfair-Italic-VariableFont_opsz\,wdth\,wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: italic;
+}
+/* Playfair Display truetype=ttf*/
+@font-face {
+  font-family: "myfont-playfair-Display";
+  src: url("../public/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+/* Barcode truetype=ttf*/
+@font-face {
+  font-family: "myfont-barcode";
+  src: url("../public/Libre_Barcode_39/LibreBarcode39-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
@@ -100,9 +124,48 @@ a {
   border:1px solid #67656a;
   transition: all 0.5s 0s ease;
 }
+.btn-mint {
+  background-color: mediumaquamarine;
+  color: #fff;
+  cursor: pointer;
+  border:1px solid mediumaquamarine;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 0.5rem 5rem;
+  font-family: 'Arial', sans-serif;
+  margin-top: 2rem;
+  transition: all 0.5s 0s ease;
+}
+.btn-mint:hover {
+  background: rgb(73, 148, 123);
+  color: #fff;
+  border:1px solid rgb(73, 148, 123);
+  transition: all 0.5s 0s ease;
+}
+.cancel-link {
+  background-color: rgb(111, 119, 116);
+  color: #fff;
+  cursor: pointer;
+  border:1px solid rgb(111, 119, 116);
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 0.5rem 5rem;
+  font-family: 'Arial', sans-serif;
+  margin-top: 2rem;
+  transition: all 0.5s 0s ease;
+}
+.cancel-link:hover {
+  background: black;
+  color: #fff;
+  border:1px solid black;
+  transition: all 0.5s 0s ease;
+}
 select {
   outline: none;
 }
+
 .box select {
   width: 210px;
   font-size: 14px;
@@ -175,65 +238,91 @@ input[type="number"]:focus {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-bottom: 50px;
   align-items: center;
   color: #fff;
   font-size: 35px;
-  font-family: 'Playfair Display'!important;
-  font-style: italic;
+  font-family: "myfont-playfair-Display";
   font-weight: 400;
   letter-spacing: 0;
   opacity: 1;
 }
+.sidebar_header-logo-barcode h2{
+  margin-bottom: 50px;
+  color: #fff;
+  font-size: 35px;
+  font-family: "myfont-barcode";
+}
 .sidebar_list {
   width: 100%;
+}
+.sidebar_list a {
+  width: 100%;
+  height: 3rem;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: bold;
+  font-family: "myfont-medium";
+  color: #fff;
 }
 .sidebar_list li {
   width: 100%;
   height: 3rem;
   border-bottom: 2px solid #fff;
-  margin-bottom: 10px;
-  text-align: center;
   padding: 10px 0;
-  font-weight: bold;
-  font-family: "myfont-medium";
+  transition: all 0.5s 0s ease;
+}
+.sidebar_list li:hover {
+  background-color: #fff;
+  color: black;
 }
 .sidebar p {
   font-family: "myfont-medium";
   color: #fff;
 }
-/* ============= Dashboard Top =====================*/
-
-.facture_container {
-  padding-top: 200px;
-}
-.facture_item, .dashboard_item {
-  width: 100%;
-  padding: 10px;
-  transition: 1s;
-  border: 1px solid gray;
-  border-radius: 2px;
-}
-.facture_id {
-  cursor: pointer;
-}
-.facture_id:hover {
-  color:pink;
-  transform: scaleY(1.1);
+.sidebar p:hover {
+  color: black;
+  transition: all 0.5s 0s ease;
 }
 
-/* ============= Create facture =====================*/
-.bill_from, .client, .facture_date, .item_details, .payent, .note {
-  margin-bottom: 1.9rem;
+/*================== Common ================= */
+.dashboard, .rows, .payments, .items, .companies, .commissions, .categories, .clients {
+  position: fixed;
+  top: 0;
+  left: 20%;
+  z-index: 9999;
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+}
+.createpayment, .editPayment, .createItemForm, .editItemForm, .createFactureForm, .editFactureForm, .createCommission, .editCommissionForm, .createCategoryForm, .createCompanyForm, .editCompanyForm, .createClientForm, .editClientForm, .createPaymentForm, .editPaymentForm, .editItemForm, .facture {
+  width: 80%;
+  margin-left: 20%;
+  padding: 40px;
 }
 
-.bill_title, .client_title, .facture_date-title, .item_details-title, .payment-title, .note-title  {
-  font-style: italic;
-  font-family: "myfont-heavy";
-
+.editCompanyForm_header-logo h3, .createCompanyForm_header-logo h3, .editCommissionForm_header-logo h3, .createCommissionForm_header-logo h3, .companies_header-logo h3, .commissions_header-logo h3, .clients_header-logo h3, .payments_header-logo h3, .categories_header-logo h3, .items_header-logo h3, .editItemsForm_header-logo h3, .companies_header-logo h3, .clients_header-logo h3, .payments_header-logo h3, .categories_header-logo h3, .payments_header-logo h3, .commissions_header-logo h3, .dashboard_header-logo h3, .createFactureForm_header-logo h3, .editFactureForm_header-logo h3, .createClientForm_header-logo h3, .editClientForm_header-logo h3, .createPaymentForm_header-logo h3, .editPaymentForm_header-logo h3, .categories_header-logo h3, .createCategoryForm_header-logo h3, .createItemForm_header-logo h3, .editItemForm_header-logo h3, .login_header-logo h3, .register_header-logo h3, .facture_header-logo h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }
+.commissions_container, .companies_container, .clients_container, .payments_container, .categories_container, .items_container, .dashboard_container, .facture_container {
+  height: auto;
+  padding-bottom: 2rem;
+  padding: 20px 20px 2rem 20px;
+}
+form {
+  padding: 20px;
+}
+
 .inline_form-group {
   margin-bottom: 1rem;
+}
+.inline_form-group {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 5px;
 }
 .form_group input, .form_group textarea {
   padding: 6px 10px;
@@ -251,138 +340,90 @@ input[type="number"]:focus {
   background: rgb(241, 241, 241);
   font-weight: 100;
 }
+.form_group .input-factureDate {
+  padding: 5.5px 10px;
+}
+.form_group .input-note {
+  padding: 6px 10px;
+}
 .form_group label {
   font-weight: 800;
   text-transform: uppercase;
 }
 
-.bill_title p {
-  margin-bottom: 10px;
-}
 
-.inline_form-group {
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 5px;
+/*================== Facture ================= */
+.facture {
+  height: 100%;
 }
-
-.inline_form-groupA {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 2rem;
+.company_zone p, .client_zone p, .initialData_zone p, .payment_zone p, .factureData_zone p {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0;
+  font-family: 'Raleway', sans-serif;
 }
-.inline_form-groupB {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
+.row-zone p {
+  font-size: 10px;
+  line-height: 16px;
+  letter-spacing: 0;
+  font-family: 'Raleway', sans-serif;
 }
-.edit-btn {
-  padding: 7px 25px;
-  background-color: pink;
-  color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-  border:1px solid pink;
+.company_zone span, .client_zone span, .initialData_zone span, .payment_zone_letter span, .factureData_zone span {
+  font-weight: 500;
+  font-family: 'Playfair Display';
+  font-style: italic;
 }
-.edit-btn:hover {
-  background:transparent;
-  color: pink;
-  border:1px solid pink;
-}
-.draft-btn, .mark_as-btn {
-  padding: 7px 25px;
-  background-color: pink;
-  color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-  border:1px solid pink;
-}
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-.rows {
-  border-radius: 5px;
-  margin-bottom: 2rem;
-  padding: 16px;
-}
-
-
-/*================== Common ================= */
-.dashboard, .rows, .payments, .items, .oneFacture, .companies, .commissions, .categories, .clients {
-  position: fixed;
-  top: 0;
-  left: 20%;
-  z-index: 9999;
-  width: 80%;
-  margin: 0 auto;
-  padding: 20px;
-}
-.createpayment, .editPayment, .createItemForm, .editItemForm, .createFactureForm, .editFactureForm, .createCommission, .editCommissionForm, .createCategoryForm, .createCompanyForm, .editCompanyForm, .createClientForm, .editClientForm, .createPaymentForm, .editPaymentForm, .editItemForm {
-  width: 80%;
-  margin-left: 20%;
-  padding: 40px;
-}
-
-.editCompanyForm_header-logo h3, .createCompanyForm_header-logo h3, .editCommissionForm_header-logo h3, .createCommissionForm_header-logo h3, .companies_header-logo h3, .commissions_header-logo h3, .clients_header-logo h3, .payments_header-logo h3, .categories_header-logo h3, .items_header-logo h3, .editItemsForm_header-logo h3, .companies_header-logo h3, .clients_header-logo h3, .payments_header-logo h3, .categories_header-logo h3, .payments_header-logo h3, .commissions_header-logo h3, .dashboard_header-logo h3, .createFactureForm_header-logo h3, .editFactureForm_header-logo h3, .createClientForm_header-logo h3, .editClientForm_header-logo h3, .createPaymentForm_header-logo h3, .editPaymentForm_header-logo h3, .categories_header-logo h3, .createCategoryForm_header-logo h3, .createItemForm_header-logo h3, .editItemForm_header-logo h3 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-.commissions_container, .companies_container, .clients_container, .payments_container, .categories_container, .items_container, .dashboard_container {
-  height: auto;
-  padding-bottom: 2rem;
-  padding: 20px 20px 2rem 20px;
-}
-form {
-  padding: 20px;
-}
-.card_group {
-  padding: 6px 10px;
-  border-radius: 5px;
-  border: 1px gainsboro solid;
-  outline: none;
-  background: gainsboro;
-  box-shadow: 2px 2px 2px gray;
-}
-.inline_card-group {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 2rem;
-  gap: 1rem;
-  width: 100%;
-  flex-wrap: wrap;
-}
-.edit-btn {
-  padding: 7px 25px;
-  background-color: pink;
-  color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-  border:1px solid pink;
-}
-
-.oneFacture_container {
+.printer_container {
   padding: 10px;
   width: 100%;
   min-height: 100vh; /* Set a minimum height to fill the viewport */
   display: flex;
   flex-direction: column;
 }
-.onePayment {
+.attention {
+  font-style: italic;
+  font-family: 'Playfair Display';
+}
+.payment_zone.bottom-0 {
   margin-top: auto;
 }
-
-.onePayment_text {
-  padding-top: 2px;
-  display: flex;
-  justify-items: space-between;
-  gap:10px;
-  font-size: 12px;
+.facture_companyName {
+  font-weight: 800;
+  font-size: 1.5rem;
+  font-family: 'Playfair Display';
 }
+
+.articleCode p, .condition p{
+  font-size: 10px;
+  font-family: 'Playfair Display';
+}
+
+.payment_zone {
+  border-top: 1px solid black;
+  padding-top: 5px;
+}
+.payment_zone_letter p {
+  font-size: 10px;
+}
+
+.tablelayout {
+  width: 100%;
+  border-collapse: collapse;
+  /* table-layout: fixed; */
+}
+.tablelayout input {
+  padding: 3px 5px;
+  width: 100%;
+  /* border: 2px black solid; */
+  outline: none;
+  background: rgb(241, 241, 241);
+  font-weight: 100;
+}
+
+.thead-firstTh {
+  width: 25% !important;
+  height: 100px !important;
+  text-overflow: ellipsis;
+}
+
+

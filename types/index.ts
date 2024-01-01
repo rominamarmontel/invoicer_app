@@ -68,7 +68,7 @@ export type FactureProps = {
   factureNumber: string,
   conditionPayment: number,
   paymentDue:string,
-  title:string,
+  title?:string,
   rows:RowProps[],
   note: string,
   payment: PaymentProps,
@@ -78,7 +78,7 @@ export type FactureProps = {
 export type RowProps = {
   _id: string,
   category: { _id: string; catName: string },
-  item?: { _id: string; itemName: { fr: string; jp: string } },
+  item: { _id: string; itemName: { fr: string; jp: string } },
   itemPlus?: string,
   qty: number,
   price: number,

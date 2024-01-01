@@ -14,7 +14,7 @@ import Commission from "@/models/commission";
 export const GET = async(req:Request) => {
   await connectMongoDB()
   const factures = await Facture.find()
-  return NextResponse.json(factures)
+  return NextResponse.json({factures})
 }
 
 export const POST = async(req:Request) => {

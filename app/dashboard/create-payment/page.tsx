@@ -6,7 +6,7 @@ import CreatePaymentForm from '@/components/Payment/CreatePaymentForm'
 const createPayment = async () => {
   const session = await getServerSession(authOptions)
   if (!session) {
-    redirect('/sign-in')
+    redirect('/login')
   }
   return <CreatePaymentForm />
 }

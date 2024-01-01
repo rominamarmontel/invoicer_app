@@ -1,18 +1,28 @@
+'use client'
+
 import { ItemProps } from '@/types'
-import Link from 'next/link'
-import React from 'react'
-import DeleteButtonItem from '../DeleteButton/DeleteButtonItem'
-import { LiaEditSolid } from 'react-icons/lia'
+import React, { useEffect, useState } from 'react'
 import DatatableItem from './DatatableItem'
 import { itemColumns } from '@/datatablesource'
 
-const Items = ({
-  items,
-  setItems,
-}: {
-  items: ItemProps[]
-  setItems: React.Dispatch<React.SetStateAction<ItemProps[]>>
-}) => {
+const Items = () => {
+  const [items, setItems] = useState<ItemProps[]>([])
+
+  useEffect(() => {
+    const fetchAllItems = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXTAUTH_URL}/api/items`)
+        if (res.ok) {
+          const data = await res.json()
+          setItems(data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchAllItems()
+  }, [])
+
   return (
     <div className="items m-5 p-5 bg-white rounded shadow">
       <div className="items_container">
