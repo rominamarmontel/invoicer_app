@@ -68,11 +68,12 @@ export type FactureProps = {
   factureNumber: string,
   conditionPayment: number,
   paymentDue:string,
-  title?:string,
+  title:string,
   rows:RowProps[],
   note: string,
   payment: PaymentProps,
-  commission: CommissionProps | null
+  commission: CommissionProps | null,
+  createdAt: string
 }
 
 export type RowProps = {

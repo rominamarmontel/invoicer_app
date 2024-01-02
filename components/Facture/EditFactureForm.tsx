@@ -2,14 +2,16 @@
 
 import {
   CategoryProps,
+  ClientProps,
   CommissionProps,
+  CompanyProps,
   FactureProps,
   ItemProps,
+  PaymentProps,
   RowProps,
 } from '@/types'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { toast } from 'react-hot-toast'
 import CompanyData from '../Company/CompanyData'
 import ClientData from '../Client/ClientData'
@@ -17,17 +19,50 @@ import PaymentData from '../Payment/PaymentData'
 import CategoryData from '../Category/CategoryData'
 import ItemData from '../Item/ItemData'
 import CommissionData from '../Commission/CommissionData'
+import FactureNumber from './FactureNumber'
+import CalculatePaymentDue from './CalculatePaymentDue '
 import CalculateSubtotal from './CalculateSubtotal'
 import CalculateAllTotal from './CalculateAllTotal'
-import CalculatePaymentDue from './CalculatePaymentDue '
+import ReturnButton from './../Button/ReturnButton'
 
 interface EditFactureFormProps {
-  factureData: FactureProps | null
-  setFactureData: React.Dispatch<React.SetStateAction<FactureProps | null>>
+  id: string
+  facture: FactureProps | null
+  company: CompanyProps | null
+  client: ClientProps | null
+  payment: PaymentProps | null
+  commission: CommissionProps | null
+  rows: RowProps[]
+  currentCategories: CategoryProps[]
+  currentItems: ItemProps[]
+  setFacture: React.Dispatch<React.SetStateAction<FactureProps | null>>
+  setCompany: React.Dispatch<React.SetStateAction<CompanyProps | null>>
+  setClient: React.Dispatch<React.SetStateAction<ClientProps | null>>
+  setPayment: React.Dispatch<React.SetStateAction<PaymentProps | null>>
+  setCommission: React.Dispatch<React.SetStateAction<CommissionProps | null>>
+  setRows: React.Dispatch<React.SetStateAction<RowProps[]>>
+  setCurrentCategories: React.Dispatch<React.SetStateAction<CategoryProps[]>>
+  setCurrentItems: React.Dispatch<React.SetStateAction<ItemProps[]>>
 }
+
 const EditFactureForm: React.FC<EditFactureFormProps> = ({
-  factureData,
-  setFactureData,
+  id,
+  facture,
+  company,
+  client,
+  payment,
+  commission,
+  rows,
+  currentCategories,
+  currentItems,
+  setFacture,
+  setCompany,
+  setClient,
+  setPayment,
+  setCommission,
+  setRows,
+  setCurrentCategories,
+  setCurrentItems,
 }) => {
   const { companies, setCompanies } = CompanyData()
   const { clients, setClients } = ClientData()
@@ -35,36 +70,30 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
   const { categories, setCategories } = CategoryData()
   const { items, setItems } = ItemData()
   const { commissions, setCommissions } = CommissionData()
-  const [company, setCompany] = useState('')
-  const [client, setClient] = useState('')
+  const { factureNumber, setFactureNumber, handleCreateFactureNumber } =
+    FactureNumber()
+  const [selectedCompany, setSelectedCompany] = useState<CompanyProps | null>(
+    null
+  )
+  const [selectedClient, setSelectedClient] = useState<ClientProps | null>(null)
   const [factureDate, setFactureDate] = useState('')
-  const [factureNumber, setFactureNumber] = useState('')
   const [conditionPayment, setConditionPayment] = useState(0)
   const { paymentDue, setPaymentDue } = CalculatePaymentDue(
     factureDate,
     conditionPayment
   )
   const [title, setTitle] = useState('')
-  const [currentCategories, setCurrentCategories] = useState<CategoryProps[]>(
-    []
-  )
-  const [category, setCategory] = useState('')
-  // const [currentItems, setCurrentItems] = useState<ItemProps[]>([
-  //   {
-  //     _id: '',
-  //     itemName: {
-  //       fr: '',
-  //       jp: '',
-  //     },
-  //   },
-  // ])
-  const [currentItems, setCurrentItems] = useState<ItemProps[]>([])
-  const [item, setItem] = useState('')
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryProps | null>(null)
+  const [selectedItemJp, setSelectedItemJp] = useState<ItemProps | null>(null)
   const [note, setNote] = useState('')
-  const [payment, setPayment] = useState('')
-  const [rows, setRows] = useState<RowProps[]>([])
+  const [selectedPayment, setSelectedPayment] = useState<PaymentProps | null>(
+    null
+  )
+  const router = useRouter()
   const { subtotal, setSubtotal } = CalculateSubtotal(rows)
-  const [commission, setCommission] = useState('')
+  const [selectedCommission, setSelectedCommission] =
+    useState<CommissionProps | null>(null)
   const {
     allTotal,
     setAllTotal,
@@ -73,339 +102,45 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
     tauxValue,
     setTauxValue,
   } = CalculateAllTotal(subtotal)
-  const router = useRouter()
-  const [facture, setFacture] = useState({
-    company: '',
-    client: '',
-    factureDate: '',
-    factureNumber: '',
-    conditionPayment: 0,
-    paymentDue: '',
-    title: '',
-    note: '',
-    payment: '',
-    rows: [],
-    commission: '',
-    allTotal: 0,
-  })
-
-  useEffect(() => {
-    const fetchCompanyDetails = async () => {
-      try {
-        const companyId = factureData?.company
-        if (companyId) {
-          const res = await fetch(
-            `${process.env.NEXTAUTH_URL}/api/companies/${companyId}`
-          )
-          if (res.ok) {
-            const data = await res.json()
-            setCompany(data.company.name)
-          }
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchCompanyDetails()
-  }, [factureData?.company])
-
-  useEffect(() => {
-    const fetchClientDetails = async () => {
-      try {
-        const clientId = factureData?.client
-        if (clientId) {
-          const res = await fetch(
-            `${process.env.NEXTAUTH_URL}/api/clients/${clientId}`
-          )
-          if (res.ok) {
-            const data = await res.json()
-            setClient(data.client.clientName || '')
-          }
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchClientDetails()
-  }, [factureData?.client])
-
-  useEffect(() => {
-    const fetchPaymentDetails = async () => {
-      try {
-        const paymentId = factureData?.payment
-        if (paymentId) {
-          const res = await fetch(
-            `${process.env.NEXTAUTH_URL}/api/payments/${paymentId}`
-          )
-          if (res.ok) {
-            const data = await res.json()
-            setPayment(data.payment.bankName || '')
-          }
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchPaymentDetails()
-  }, [factureData?.payment])
-
-  useEffect(() => {
-    const fetchCommissionDetails = async () => {
-      try {
-        const commissionId = factureData?.commission
-        if (commissionId) {
-          const res = await fetch(
-            `${process.env.NEXTAUTH_URL}/api/commissions/${commissionId}`
-          )
-          if (res.ok) {
-            const data = await res.json()
-            setCommission(data.commission.commissionName)
-            setSelectedCommissionTaux(data.commission.taux)
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching commission details:', error)
-      }
-    }
-    fetchCommissionDetails()
-  }, [factureData?.commission])
-
-  useEffect(() => {
-    const fetchRowsDetails = async () => {
-      try {
-        const rowPromises =
-          factureData?.rows?.map(async (rowId) => {
-            const res = await fetch(
-              `${process.env.NEXTAUTH_URL}/api/rows/${rowId}`
-            )
-            if (res.ok) {
-              const data = await res.json()
-              return data.row || null
-            } else {
-              return null
-            }
-          }) || []
-        const rowsData = await Promise.all(rowPromises)
-        setRows(rowsData.filter(Boolean))
-
-        const categoryPromises = rowsData.map(async (row: RowProps) => {
-          const resCat = await fetch(`/api/categories/${row.category}`)
-          if (resCat.ok) {
-            const dataCat = await resCat.json()
-            return dataCat.category ? dataCat.category : null
-          } else {
-            return null
-          }
-        })
-
-        const itemPromises = rowsData.map(async (row: RowProps) => {
-          const resItem = await fetch(`/api/items/${row.item}`)
-          if (resItem.ok) {
-            const dataItem = await resItem.json()
-            return dataItem.item ? dataItem.item : null
-          } else {
-            return null
-          }
-        })
-
-        const updatedCategories = await Promise.all<CategoryProps>(
-          categoryPromises
-        )
-        setCurrentCategories(updatedCategories)
-        const updatedItems = await Promise.all<ItemProps>(itemPromises)
-        setCurrentItems(updatedItems)
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    fetchRowsDetails()
-  }, [factureData?.rows])
-
-  useEffect(() => {
-    const initialValues = async () => {
-      try {
-        setCompany(company || '')
-        setClient(client || '')
-        setFactureDate(factureData?.factureDate || '')
-        setFactureNumber(factureData?.factureNumber || '')
-        setConditionPayment(factureData?.conditionPayment || 0)
-        setPaymentDue(factureData?.paymentDue || '')
-        setTitle(factureData?.title || '')
-        setNote(factureData?.note || '')
-        setRows(factureData?.rows || [])
-        setPayment(payment || '')
-        setCommission(commission || '')
-      } catch (error) {
-        console.error('Error fetching initial values:', error)
-      }
-    }
-    initialValues()
-  }, [])
 
   /* ================ Company ======================*/
-  const getCompanyInfoByName = async (companyName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: companyName,
-    }
-  }
-  const companyChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCompanyName = e.target.value
-    setCompany(selectedCompanyName)
-    try {
-      const selectedCompanyInfo = await getCompanyInfoByName(
-        selectedCompanyName
-      )
-      const selectedCompanyId = selectedCompanyInfo._id
-      setFacture((prevFacture) => ({
-        ...prevFacture,
-        company: selectedCompanyId,
-      }))
-    } catch (error) {
-      console.error('Error fetching company information:', error)
-    }
+  const companyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCompanyName = e.target.value.trim()
+    const selectedCompany =
+      companies.find((company) => company.name === selectedCompanyName) || null
+    setSelectedCompany(selectedCompany)
   }
 
   /* ================ Client ======================*/
-  const getClientInfoByName = async (clientName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: clientName,
-    }
-  }
   const clientChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedClientName = e.target.value.trim()
-    setClient(selectedClientName)
-    try {
-      const selectedClientInfo = await getClientInfoByName(selectedClientName)
-      const selectedClientId = selectedClientInfo._id
-      setFacture((prevFacture) => ({
-        ...prevFacture,
-        client: selectedClientId,
-      }))
-    } catch (error) {
-      console.error('Error fetching client information:', error)
-    }
+    const selectedClient =
+      clients.find((client) => client.clientName === selectedClientName) || null
+    setSelectedClient(selectedClient)
   }
 
   /* ================ Payment ======================*/
-  const getPaymentInfoByName = async (bankName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: bankName,
-    }
-  }
   const paymentChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedPaymentName = e.target.value.trim()
-    setPayment(selectedPaymentName)
-    try {
-      const selectedPaymentInfo = await getPaymentInfoByName(
-        selectedPaymentName
-      )
-      const selectedPaymentId = selectedPaymentInfo._id
-      setFacture((prevFacture) => ({
-        ...prevFacture,
-        payment: selectedPaymentId,
-      }))
-    } catch (error) {
-      console.error('Error fetching Payment information:', error)
-    }
+    const selectedPayment =
+      payments.find((payment) => payment.bankName === selectedPaymentName) ||
+      null
+    setSelectedPayment(selectedPayment)
   }
 
-  /* ============= Select commission name and display taux ===================*/
-  const getCommissionInfoByName = async (commissionName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: commissionName,
-    }
-  }
+  /* ========== Select commission name and display taux =============*/
   const commissionChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCommissionName = e.target.value.trim()
-    setCommission(selectedCommissionName)
+    const selectedCommission =
+      commissions.find(
+        (commission) => commission.commissionName === selectedCommissionName
+      ) || null
+    setSelectedCommission(selectedCommission)
 
-    const selectedCommission = commissions.find(
-      (commission) => commission.commissionName === selectedCommissionName
-    )
-
-    if (selectedCommission) {
-      setSelectedCommissionTaux(selectedCommission.taux)
-      try {
-        const selectedCommissionInfo = await getCommissionInfoByName(
-          selectedCommissionName
-        )
-
-        const selectedCommissionId = selectedCommissionInfo._id
-        setFacture((prevFacture) => ({
-          ...prevFacture,
-          commission: selectedCommissionId,
-        }))
-      } catch (error) {
-        console.error('Error fetching Commission information:', error)
+    for (let i = 0; i < commissions.length; i++) {
+      if (commissions[i].commissionName === selectedCommissionName) {
+        setSelectedCommissionTaux(commissions[i].taux)
       }
-    }
-  }
-
-  /* ================ Category ======================*/
-  const getCategoryInfoByName = async (catName: string) => {
-    return {
-      _id: 'somObjectId',
-      name: catName,
-    }
-  }
-  const categoryChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>,
-    i: number
-  ) => {
-    const selectCategoryName = e.target.value.trim()
-    setCategory(selectCategoryName)
-    try {
-      const selectedCategoryInfo = await getCategoryInfoByName(
-        selectCategoryName
-      )
-      const selectedCategoryId = selectedCategoryInfo._id
-
-      setRows((prevRows) => {
-        const updatedRows = [...prevRows]
-        updatedRows[i].category = {
-          _id: selectedCategoryId,
-          catName: selectCategoryName,
-        }
-        return updatedRows
-      })
-    } catch (error) {
-      console.log('Error fetching Category information:', error)
-    }
-  }
-
-  /* ================ Item ======================*/
-  const getItemInfoByName = async (itemName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: itemName,
-    }
-  }
-  const itemChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>,
-    i: number
-  ) => {
-    const selectItemName = e.target.value.trim()
-    setItem(selectItemName)
-    try {
-      const selectedItemInfo = await getItemInfoByName(selectItemName)
-      const selectedItemId = selectedItemInfo._id
-      setRows((prevRows) => {
-        const updatedRows = [...prevRows]
-        updatedRows[i].item = {
-          _id: selectedItemId,
-          itemName: {
-            fr: selectItemName,
-            jp: selectItemName,
-          },
-        }
-        return updatedRows
-      })
-    } catch (error) {
-      console.log('Error fetching Item information:', error)
     }
   }
 
@@ -430,10 +165,9 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
   }
 
   /* ================ handlerChange (row)======================*/
-  const [selectedItemInfo, setSelectedItemInfo] = useState<
-    (ItemProps | null)[]
-  >(Array(rows.length).fill(null))
-
+  const [selectedItem, setSelectedItem] = useState<(ItemProps | null)[]>(
+    Array(rows.length).fill(null)
+  )
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     i: number
@@ -456,13 +190,20 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
     list[i]['total'] = list[i]['qty'] * list[i]['price']
     setRows(list)
 
+    if (name === 'category') {
+      const selectedCategoryName = value
+      const selectedCategory =
+        categories.find(
+          (category) => category.catName === selectedCategoryName
+        ) || null
+      setSelectedCategory(selectedCategory)
+    }
+
     if (name === 'item') {
       const selectedItemName = value
-      const selectedItem = items.find(
-        (item) => item.itemName.fr === selectedItemName
-      )
-
-      setSelectedItemInfo((prevSelected) => {
+      const selectedItem =
+        items.find((item) => item.itemName.fr === selectedItemName) || null
+      setSelectedItem((prevSelected) => {
         const updatedSelected: (ItemProps | null)[] = [...(prevSelected || [])]
         updatedSelected[i] = selectedItem || null
         return updatedSelected
@@ -474,7 +215,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
   const handleAddItem = (e: React.MouseEvent) => {
     e.preventDefault()
     addRow()
-    setSelectedItemInfo((prevSelected) => [...prevSelected, null])
+    setSelectedItem((prevSelected) => [...prevSelected, null])
   }
 
   /* ================ Delete row ======================*/
@@ -486,6 +227,70 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
   /* ================ handleSendAndSave ======================*/
   const handleSendAndSave = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!company) {
+      toast.error('Please select a COMPANY.')
+      return
+    }
+    if (!client) {
+      toast.error('Please select a CLIENT.')
+      return
+    }
+    if (!factureDate) {
+      toast.error('Please select a FACTURE DATE.')
+      return
+    }
+    if (!paymentDue) {
+      toast.error('Please select a PAYMENT TERMS.')
+      return
+    }
+    if (!payment) {
+      toast.error('Please select a PAYMENT MOYEN.')
+      return
+    }
+    if (!title) {
+      toast.error('Please select a TITLE LIST.')
+      return
+    }
+    if (rows.length === 0) {
+      toast.error('Please add at least one row.')
+      return
+    }
+
+    const rowsValidation = rows.every((row, index) => {
+      if (!row.category) {
+        toast.error(`Please select a CATEGORY for row ${index + 1}.`)
+        return false
+      }
+
+      if (!row.item) {
+        toast.error(`Please select an DESCRIPTION for row ${index + 1}.`)
+        return false
+      }
+
+      if (!row.qty || row.qty <= 0 || isNaN(row.qty)) {
+        toast.error(`Please enter a valid quantity for row ${index + 1}.`)
+        return false
+      }
+
+      if (!row.unit || row.unit === 'string') {
+        toast.error(`Please enter a valid unite for row ${index + 1}.`)
+        return false
+      }
+
+      if (!row.price || row.price <= 0 || isNaN(row.qty)) {
+        toast.error(`Please enter a valid price for row ${index + 1}.`)
+        return false
+      }
+      return true
+    })
+    if (!commission) {
+      toast.error('Please select a COMMISSION.')
+      return
+    }
+
+    if (!rowsValidation) {
+      return
+    }
 
     const formattedRows = rows.map((row) => {
       return {
@@ -501,24 +306,24 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
 
     try {
       const res = await fetch(
-        `${process.env.NEXTAUTH_URL}/api/factures/${factureData?._id}`,
+        `${process.env.NEXTAUTH_URL}/api/factures/${id}`,
         {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            company,
-            client,
+            company: selectedCompany?._id,
+            client: selectedClient?._id,
             factureDate,
-            factureNumber: factureNumber,
+            factureNumber,
             conditionPayment,
             paymentDue,
             title,
             rows: formattedRows,
             note,
-            payment,
-            commission,
+            payment: selectedPayment?._id,
+            commission: selectedCommission?._id,
           }),
         }
       )
@@ -526,61 +331,46 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
         toast.success('Update Facture successfully')
         router.push('/dashboard')
         router.refresh()
+      } else {
+        const errorData = await res.json()
+        toast.error(`Failed to update Facture: ${errorData.error}`)
       }
     } catch (error) {
       console.log(error)
+      const errorMessage = (error as Error)?.message || 'Internal Server Error'
+      toast.error(`Failed to update Facture: ${errorMessage}`)
     }
   }
 
   return (
-    <div className="editFactureForm">
-      <div className="editFactureForm_container">
-        <div className="editFactureForm_header">
-          <div className="editFactureForm_header-logo">
+    <div className="createFactureForm">
+      <div className="createFactureForm_container">
+        <div className="createFactureForm_header">
+          <div className="createFactureForm_header-logo">
             <h3>Edit a Facture</h3>
           </div>
-          <Link href="/dashboard" className="flex items-center gap-2 mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6 text-slate-400"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-            <span className="text-sm text-slate-400">Return</span>
-          </Link>
+          <ReturnButton />
         </div>
-
         <form className="w-full">
           <div className="w-1/2">
             {/* ================ Your company info ======================*/}
             <div className="form_group w-1/2 mb-4">
               <label>BILL FROM</label>
-              {companies?.length > 0 && (
-                <select onChange={companyChange} value={company}>
-                  <option value="">Choose your company</option>
-                  {companies &&
-                    companies.map((company) => (
-                      <option key={company._id} value={company.name}>
-                        {company.name}
-                      </option>
-                    ))}
-                </select>
-              )}
+              <select onChange={companyChange} value={company?.name}>
+                <option value="-1">Choose your company</option>
+                {companies &&
+                  companies.map((company: CompanyProps) => (
+                    <option key={company._id} value={company.name}>
+                      {company.name}
+                    </option>
+                  ))}
+              </select>
             </div>
-
             {/* ================ Client info ======================*/}
             <div className="form_group w-1/2 mb-4">
               <label>BILL TO</label>
-              <select onChange={clientChange} value={client}>
-                <option value="">Choose Client</option>
+              <select onChange={clientChange} value={client?.clientName || ''}>
+                <option value="-1">Choose Client</option>
                 {clients && Array.isArray(clients) ? (
                   clients.map((client) => (
                     <option key={client._id} value={client.clientName}>
@@ -596,9 +386,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
             {/* ================ Facture number ======================*/}
             <div className="form_group mb-4">
               <label>FACTURE NUMBER</label>
-              <div>
-                <p>{factureData?.factureNumber}</p>
-              </div>
+              <div>{facture?.factureNumber}</div>
             </div>
 
             {/* ================ Facture date ======================*/}
@@ -608,7 +396,8 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                 type="date"
                 placeholder="Facture Date"
                 onChange={(e) => setFactureDate(e.target.value)}
-                value={factureData?.factureDate}
+                className="input-factureDate"
+                value={facture?.factureDate || factureDate}
               />
             </div>
 
@@ -617,7 +406,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
               <label>Payment Terms</label>
               <select
                 onChange={(e) => setConditionPayment(Number(e.target.value))}
-                value={factureData?.conditionPayment}
+                value={facture?.conditionPayment}
               >
                 <option value="-1">Choose days</option>
                 <option value="10">10</option>
@@ -630,13 +419,13 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
             {/* ================ Payment due ======================*/}
             <div className="form_group w-1/2 mb-4">
               <label>Payment due</label>
-              <p>{paymentDue}</p>
+              <div className="text-center py-2">{paymentDue}</div>
             </div>
 
-            {/* ================ Payment ======================*/}
+            {/* ================ Payment Moyen======================*/}
             <div className="form_group w-1/2 mb-4">
               <label>Payment Moyen</label>
-              <select onChange={paymentChange} value={payment}>
+              <select onChange={paymentChange} value={payment?.bankName}>
                 <option value="-1">Choose Payment</option>
                 {payments &&
                   payments.map((payment) => (
@@ -652,12 +441,12 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
               <label>TITLE LIST</label>
               <select
                 onChange={(e) => setTitle(e.target.value)}
-                value={factureData?.title}
+                value={facture?.title}
               >
                 <option value="-1">Choose a Title</option>
-                <option value="preparation">PREPARATION</option>
-                <option value="reperage">REPERAGE</option>
-                <option value="tournage">TOURNAGE</option>
+                <option value="preparation">Preparation</option>
+                <option value="reperage">Reperage</option>
+                <option value="tournage">Tournage</option>
               </select>
             </div>
           </div>
@@ -674,8 +463,6 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                       type="string"
                       placeholder="ex. November 2023"
                       onChange={(e) => setNote(e.target.value)}
-                      value={factureData?.note}
-                      className="text-sm"
                     />
                   </th>
                 </tr>
@@ -758,49 +545,53 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                     </td>
                     {/* ================ itemName.jp ======================*/}
                     <td className="px-2 py-2 text-xs">
-                      {selectedItemInfo[i] && selectedItemInfo[i]?.itemName ? (
-                        <p>{selectedItemInfo[i]?.itemName.jp}</p>
-                      ) : (
+                      {currentItems[i] && currentItems[i]?.itemName.jp ? (
                         <p>{currentItems[i]?.itemName.jp}</p>
+                      ) : (
+                        <p>No Japanese name available</p>
                       )}
                     </td>
+
                     {/* ================ Qty ======================*/}
                     <td className="px-2 py-2">
                       <input
                         name="qty"
                         type="number"
-                        placeholder="ex) 1"
+                        placeholder="ex.1"
                         onChange={(e) => handlerChange(e, i)}
-                        value={row.qty || 0}
+                        value={row.qty}
                       />
                     </td>
+
                     {/* ================ Unit ======================*/}
                     <td className="px-2 py-2">
                       <input
                         name="unit"
                         type="text"
-                        placeholder="ex) 1"
+                        placeholder="ex. day"
                         onChange={(e) => handlerChange(e, i)}
-                        value={row.unit || ''}
+                        value={row.unit}
                       />
                     </td>
+
                     {/* ================ Price ======================*/}
                     <td className="px-1 py-1">
                       <input
                         name="price"
                         type="number"
-                        placeholder="ex) 350"
+                        placeholder="ex. 350"
                         onChange={(e) => handlerChange(e, i)}
-                        value={row.price || 0}
-                        className="inputText text-sm"
+                        value={row.price}
                       />
                     </td>
+
                     {/* ================ Total ======================*/}
                     <td className="px-1 py-1">
                       <p className="text-right">{row.total.toFixed(2)}</p>
                     </td>
+
                     {/* ================ Delete Button ======================*/}
-                    <td className="form_group w-1/12">
+                    <td className="px-2 py-2">
                       <button onClick={() => deleteRow(i)}>
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -808,7 +599,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                           viewBox="0 0 24 24"
                           strokeWidth={1.5}
                           stroke="currentColor"
-                          className="w-6 h-6 text-red-400"
+                          className="w-6 h-6 text-red-400 text-center"
                         >
                           <path
                             strokeLinecap="round"
@@ -835,7 +626,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-9 h-9"
+                className="w-6 h-6"
               >
                 <path
                   strokeLinecap="round"
@@ -859,7 +650,10 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
               <div className="form_group inline_form-group gap-2 border-b-2 pt-4">
                 <div className="form_group w-2/3">
                   <label>Commission</label>
-                  <select onChange={commissionChange} value={commission}>
+                  <select
+                    onChange={commissionChange}
+                    value={commission?.commissionName}
+                  >
                     <option value="-1">Choose your commission</option>
                     {commissions &&
                       commissions.map((commission: CommissionProps) => (
@@ -876,11 +670,11 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                   <label>TAUX</label>
                   <p>
                     {selectedCommissionTaux !== null
-                      ? `${selectedCommissionTaux} %`
+                      ? `${selectedCommissionTaux}%`
                       : ''}
                   </p>
                 </div>
-                <p>{tauxValue && tauxValue.toFixed(2)}</p>
+                <p>{tauxValue?.toFixed(2)}</p>
               </div>
               <div className="flex justify-between">
                 <div className="form_group">
@@ -890,10 +684,9 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
               </div>
             </div>
           </div>
-
           <div className="btn_container">
-            <button className="btn" onClick={handleSendAndSave}>
-              Update
+            <button className="btn-black" onClick={handleSendAndSave}>
+              Create
             </button>
           </div>
         </form>

@@ -67,7 +67,37 @@ const Datatable: React.FC<DatatableProps> = ({ columns }) => {
         ...column,
         renderCell: (params: DataFactureProps) => {
           const clientName = getClientName(params.row.client)
+
           return <span>{clientName}</span>
+        },
+      } as GridColDef<FactureProps>
+    }
+    if (column.field === 'createdAt') {
+      return {
+        ...column,
+        renderCell: (params: DataFactureProps) => {
+          const formattedCreatedAt = new Date(
+            params.row.createdAt
+          ).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          })
+          return <span>{formattedCreatedAt}</span>
+        },
+      } as GridColDef<FactureProps>
+    } else if (column.field === 'factureDate') {
+      return {
+        ...column,
+        renderCell: (params: DataFactureProps) => {
+          const formattedFactureDate = new Date(
+            params.row.factureDate
+          ).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+          })
+          return <span>{formattedFactureDate}</span>
         },
       } as GridColDef<FactureProps>
     }

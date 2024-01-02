@@ -1,44 +1,14 @@
 import React from 'react'
 import CompanyData from './CompanyData'
-import { CompanyProps, FactureProps } from '@/types'
+import { CompanyProps } from '@/types'
 
-const CompanyForm = ({
-  setCompany,
-  setFacture,
-}: {
-  setCompany: React.Dispatch<React.SetStateAction<CompanyProps[]>>
-  setFacture: React.Dispatch<React.SetStateAction<FactureProps[]>>
-}) => {
+const CompanyForm = ({ setCompany }: { setCompany: CompanyProps }) => {
   const { companies, setCompanies } = CompanyData()
-
-  const getCompanyInfoByName = async (companyName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: companyName,
-    }
-  }
-  const companyChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCompanyName = e.target.value
-    setCompany(selectedCompanyName)
-    try {
-      const selectedCompanyInfo = await getCompanyInfoByName(
-        selectedCompanyName
-      )
-      const selectedCompanyId = selectedCompanyInfo._id
-      setFacture((prevFacture) => ({
-        ...prevFacture,
-        company: selectedCompanyId,
-      }))
-    } catch (error) {
-      console.error('Error fetching company information:', error)
-    }
-  }
 
   return (
     <div className="form_group w-1/2 mb-4">
-      {/* ================ Your company info ======================*/}
       <label>BILL FROM</label>
-      <select onChange={companyChange}>
+      <select onChange={(e) => setCompany(e.target.value)}>
         <option value="" selected>
           Choose your company
         </option>

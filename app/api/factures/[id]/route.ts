@@ -12,7 +12,6 @@ import Commission from "@/models/commission"
 import { RowProps } from "@/types"
 import Row from "@/models/row"
 import CompanyData from "@/components/Company/CompanyData"
-import ItemData from "@/components/Item/ItemData"
 
 export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
   const session = await getServerSession(authOptions)
@@ -37,53 +36,53 @@ export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
     allTotal,
   } = await req.json()
 
-  const getCompanyInfoByName = async (companyName: string) => {
-    const companyData = await Company.findOne({ name: companyName });
+  const getCompanyInfoByName = async (selectedCompanyName: string) => {
+    const companyData = await Company.findOne({ _id: new String(selectedCompanyName) })
     if (!companyData) {
-      throw new Error('Company not found');
+      throw new Error(`Company not found: ${selectedCompanyName}`)
     }
-    return companyData;
-  };
-
-  const getClientInfoByName = async (clientName: string) => {
-      const clientData = await Client.findOne({ clientName: String(clientName) });
-      if (!clientData) {
-        throw new Error('Client not found');
-      }
-      return clientData;
-  };
-  
-  const getPaymentInfoByName = async (bankName: string) => {
-      const paymentData = await Payment.findOne({ bankName: String(bankName) });
-      if (!paymentData) {
-        throw new Error('Payment not found');
-      }
-      return paymentData;
-  };
-
-  const getCategoryInfoByName = async (catName: string) => {
-    const categoryData = await Category.findOne({ _id: catName });
-    if (!categoryData) {
-      throw new Error('Category not found');
-    }
-    return categoryData;
-  };
-
-  const getItemInfoByName = async (itemName: string) => {
-    const itemData = await Item.findOne({_id: itemName
-    })
-    if (!itemData) {
-      throw new Error('Item not found')
-    }
-    return itemData
+    return companyData
   }
 
-  const getCommissionInfoByName = async(commissionName: string) => {
-    const commissionData = await Commission.findOne({commissionName: String(commissionName)})
+  const getClientInfoByName = async (selectedClientName: string) => {
+    const clientData = await Client.findOne({ _id: String(selectedClientName) })
+    if (!clientData) {
+      throw new Error('Client not found')
+    }
+    return clientData
+  }
+
+  const getPaymentInfoByName = async (selectedPaymentName: string) => {
+  const paymentData = await Payment.findOne({ _id: String(selectedPaymentName) })
+  if (!paymentData) {
+    throw new Error('Payment not found')
+  }
+  return paymentData
+  }
+
+  const getCommissionInfoByName = async(selectedCommissionName: string) => {
+    const commissionData = await Commission.findOne({_id: String(selectedCommissionName)})
     if (!commissionData) {
       throw new Error('Commission not found')
     }
     return commissionData
+  }
+
+  const getCategoryInfoByName = async (catName: string) => {
+    const categoryData = await Category.findOne({ catName: String(catName) })
+    if (!categoryData) {
+      throw new Error('Category not found')
+    }
+    return categoryData
+  }
+
+
+  const getItemInfoByName = async (itemName: string) => {
+    const itemData = await Item.findOne({ 'itemName.fr': itemName })  
+      if (!itemData) {
+        throw new Error('Item not found')
+      }
+      return itemData
   }
 
   const formattedRows = await Promise.all((rows as Array<RowProps>).map(async (row) => {

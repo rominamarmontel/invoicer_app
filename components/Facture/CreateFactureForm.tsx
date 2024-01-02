@@ -1,7 +1,15 @@
 'use client'
 
-import { CommissionProps, CompanyProps, ItemProps, RowProps } from '@/types'
-import Link from 'next/link'
+import {
+  CategoryProps,
+  ClientProps,
+  CommissionProps,
+  CompanyProps,
+  FactureProps,
+  ItemProps,
+  PaymentProps,
+  RowProps,
+} from '@/types'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
@@ -15,6 +23,7 @@ import FactureNumber from './FactureNumber'
 import CalculatePaymentDue from './CalculatePaymentDue '
 import CalculateSubtotal from './CalculateSubtotal'
 import CalculateAllTotal from './CalculateAllTotal'
+import ReturnButton from './../Button/ReturnButton'
 
 const CreateFactureForm = () => {
   const { companies, setCompanies } = CompanyData()
@@ -25,24 +34,36 @@ const CreateFactureForm = () => {
   const { commissions, setCommissions } = CommissionData()
   const { factureNumber, setFactureNumber, handleCreateFactureNumber } =
     FactureNumber()
-
-  const [company, setCompany] = useState('')
-  const [client, setClient] = useState('')
+  const [facture, setFacture] = useState<FactureProps | null>(null)
+  const [company, setCompany] = useState<CompanyProps[]>([])
+  const [selectedCompany, setSelectedCompany] = useState<CompanyProps | null>(
+    null
+  )
+  const [client, setClient] = useState<ClientProps[]>([])
+  const [selectedClient, setSelectedClient] = useState<ClientProps | null>(null)
   const [factureDate, setFactureDate] = useState('')
   const [conditionPayment, setConditionPayment] = useState(0)
   const { paymentDue, setPaymentDue } = CalculatePaymentDue(
     factureDate,
     conditionPayment
   )
-  const [title, setTitle] = useState('-1')
-  const [category, setCategory] = useState('')
-  const [item, setItem] = useState('')
+  const [title, setTitle] = useState('')
+  const [category, setCategory] = useState<CategoryProps[]>([])
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryProps | null>(null)
+  const [item, setItem] = useState<ItemProps[]>([])
+  const [selectedItemJp, setSelectedItemJp] = useState<ItemProps | null>(null)
   const [note, setNote] = useState('')
-  const [payment, setPayment] = useState('')
+  const [payment, setPayment] = useState<PaymentProps[]>([])
+  const [selectedPayment, setSelectedPayment] = useState<PaymentProps | null>(
+    null
+  )
   const router = useRouter()
   const [rows, setRows] = useState<RowProps[]>([])
   const { subtotal, setSubtotal } = CalculateSubtotal(rows)
-  const [commission, setCommission] = useState('')
+  const [commission, setCommission] = useState<CommissionProps[]>([])
+  const [selectedCommission, setSelectedCommission] =
+    useState<CommissionProps | null>(null)
   const {
     allTotal,
     setAllTotal,
@@ -52,182 +73,44 @@ const CreateFactureForm = () => {
     setTauxValue,
   } = CalculateAllTotal(subtotal)
 
-  const [facture, setFacture] = useState({
-    company: '',
-    client: '',
-    factureDate: '',
-    factureNumber: '',
-    conditionPayment: 0,
-    paymentDue: '',
-    title: '',
-    note: '',
-    payment: '',
-    rows: [],
-    subtotal: 0,
-    commission: '',
-    allTotal: 0,
-  })
-
   /* ================ Company ======================*/
-  const getCompanyInfoByName = async (companyName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: companyName,
-    }
-  }
-  const companyChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedCompanyName = e.target.value
-    setCompany(selectedCompanyName)
-    try {
-      const selectedCompanyInfo = await getCompanyInfoByName(
-        selectedCompanyName
-      )
-      const selectedCompanyId = selectedCompanyInfo._id
-      setFacture((prevFacture) => ({
-        ...prevFacture,
-        company: selectedCompanyId,
-      }))
-    } catch (error) {
-      console.error('Error fetching company information:', error)
-    }
+  const companyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedCompanyName = e.target.value.trim()
+    const selectedCompany =
+      companies.find((company) => company.name === selectedCompanyName) || null
+    setSelectedCompany(selectedCompany)
   }
 
   /* ================ Client ======================*/
-  const getClientInfoByName = async (clientName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: clientName,
-    }
-  }
   const clientChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedClientName = e.target.value.trim()
-    setClient(selectedClientName)
-    try {
-      const selectedClientInfo = await getClientInfoByName(selectedClientName)
-      const selectedClientId = selectedClientInfo._id
-      setFacture((prevFacture) => ({
-        ...prevFacture,
-        client: selectedClientId,
-      }))
-    } catch (error) {
-      console.error('Error fetching client information:', error)
-    }
+    const selectedClient =
+      clients.find((client) => client.clientName === selectedClientName) || null
+    setSelectedClient(selectedClient)
   }
 
   /* ================ Payment ======================*/
-  const getPaymentInfoByName = async (bankName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: bankName,
-    }
-  }
   const paymentChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedPaymentName = e.target.value.trim()
-    setPayment(selectedPaymentName)
-    try {
-      const selectedPaymentInfo = await getPaymentInfoByName(
-        selectedPaymentName
-      )
-      const selectedPaymentId = selectedPaymentInfo._id
-      setFacture((prevFacture) => ({
-        ...prevFacture,
-        payment: selectedPaymentId,
-      }))
-    } catch (error) {
-      console.error('Error fetching Payment information:', error)
-    }
+    const selectedPayment =
+      payments.find((payment) => payment.bankName === selectedPaymentName) ||
+      null
+    setSelectedPayment(selectedPayment)
   }
 
   /* ========== Select commission name and display taux =============*/
-  const getCommissionInfoByName = async (commissionName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: commissionName,
-    }
-  }
   const commissionChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedCommissionName = e.target.value.trim()
-    setCommission(selectedCommissionName)
+    const selectedCommission =
+      commissions.find(
+        (commission) => commission.commissionName === selectedCommissionName
+      ) || null
+    setSelectedCommission(selectedCommission)
+
     for (let i = 0; i < commissions.length; i++) {
       if (commissions[i].commissionName === selectedCommissionName) {
         setSelectedCommissionTaux(commissions[i].taux)
       }
-    }
-    try {
-      const selectedCommissionInfo = await getCommissionInfoByName(
-        selectedCommissionName
-      )
-      const selectedCommissionId = await selectedCommissionInfo._id
-      setFacture((prevFacture) => ({
-        ...prevFacture,
-        commission: selectedCommissionId,
-      }))
-    } catch (error) {
-      console.error('Error fetching Commission information:', error)
-    }
-  }
-
-  /* ================ Category ======================*/
-  const getCategoryInfoByName = async (catName: string) => {
-    return {
-      _id: 'somObjectId',
-      name: catName,
-    }
-  }
-  const categoryChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>,
-    i: number
-  ) => {
-    const selectCategoryName = e.target.value.trim()
-    setCategory(selectCategoryName)
-    try {
-      const selectedCategoryInfo = await getCategoryInfoByName(
-        selectCategoryName
-      )
-      const selectedCategoryId = selectedCategoryInfo._id
-
-      setRows((prevRows) => {
-        const updatedRows = [...prevRows]
-        updatedRows[i].category = {
-          _id: selectedCategoryId,
-          catName: selectCategoryName,
-        }
-        return updatedRows
-      })
-    } catch (error) {
-      console.log('Error fetching Category information:', error)
-    }
-  }
-
-  /* ================ Item ======================*/
-  const getItemInfoByName = async (itemName: string) => {
-    return {
-      _id: 'someObjectId',
-      name: itemName,
-    }
-  }
-  const itemChange = async (
-    e: React.ChangeEvent<HTMLSelectElement>,
-    i: number
-  ) => {
-    const selectItemName = e.target.value.trim()
-    setItem(selectItemName)
-    try {
-      const selectedItemInfo = await getItemInfoByName(selectItemName)
-      const selectedItemId = selectedItemInfo._id
-      setRows((prevRows) => {
-        const updatedRows = [...prevRows]
-        updatedRows[i].item = {
-          _id: selectedItemId,
-          itemName: {
-            fr: selectItemName,
-            jp: selectItemName,
-          },
-        }
-        return updatedRows
-      })
-    } catch (error) {
-      console.log('Error fetching Item information:', error)
     }
   }
 
@@ -252,13 +135,9 @@ const CreateFactureForm = () => {
   }
 
   /* ================ handlerChange (row)======================*/
-  const [selectedItemInfo, setSelectedItemInfo] = useState<
-    (ItemProps | null)[]
-  >(Array(rows.length).fill(null))
-  const [rowErrors, setRowErrors] = useState<Array<boolean>>(
-    Array(rows.length).fill(false)
+  const [selectedItem, setSelectedItem] = useState<(ItemProps | null)[]>(
+    Array(rows.length).fill(null)
   )
-
   const handlerChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     i: number
@@ -281,13 +160,20 @@ const CreateFactureForm = () => {
     list[i]['total'] = list[i]['qty'] * list[i]['price']
     setRows(list)
 
+    if (name === 'category') {
+      const selectedCategoryName = value
+      const selectedCategory =
+        categories.find(
+          (category) => category.catName === selectedCategoryName
+        ) || null
+      setSelectedCategory(selectedCategory)
+    }
+
     if (name === 'item') {
       const selectedItemName = value
-      const selectedItem = items.find(
-        (item) => item.itemName.fr === selectedItemName
-      )
-
-      setSelectedItemInfo((prevSelected) => {
+      const selectedItem =
+        items.find((item) => item.itemName.fr === selectedItemName) || null
+      setSelectedItem((prevSelected) => {
         const updatedSelected: (ItemProps | null)[] = [...(prevSelected || [])]
         updatedSelected[i] = selectedItem || null
         return updatedSelected
@@ -299,7 +185,7 @@ const CreateFactureForm = () => {
   const handleAddItem = (e: React.MouseEvent) => {
     e.preventDefault()
     addRow()
-    setSelectedItemInfo((prevSelected) => [...prevSelected, null])
+    setSelectedItem((prevSelected) => [...prevSelected, null])
   }
 
   /* ================ Delete row ======================*/
@@ -395,8 +281,8 @@ const CreateFactureForm = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          company,
-          client,
+          company: selectedCompany?._id,
+          client: selectedClient?._id,
           factureDate,
           factureNumber: factureNumber,
           conditionPayment,
@@ -404,8 +290,8 @@ const CreateFactureForm = () => {
           title,
           rows: formattedRows,
           note,
-          payment,
-          commission,
+          payment: selectedPayment?._id,
+          commission: selectedCommission?._id,
         }),
       })
       if (res.ok) {
@@ -430,25 +316,8 @@ const CreateFactureForm = () => {
           <div className="createFactureForm_header-logo">
             <h3>Create a Facture</h3>
           </div>
-          <Link href="/dashboard" className="flex items-center gap-2 mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="w-6 h-6 text-slate-400"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m11.25 9-3 3m0 0 3 3m-3-3h7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-              />
-            </svg>
-            <span className="text-sm text-slate-400">Return</span>
-          </Link>
+          <ReturnButton />
         </div>
-
         <form className="w-full">
           <div className="w-1/2">
             {/* ================ Your company info ======================*/}
@@ -506,7 +375,6 @@ const CreateFactureForm = () => {
               <label>Payment Terms</label>
               <select
                 onChange={(e) => setConditionPayment(Number(e.target.value))}
-                className=""
               >
                 <option value="-1">Choose days</option>
                 <option value="10">10</option>
@@ -637,8 +505,8 @@ const CreateFactureForm = () => {
                     </td>
                     {/* ================ itemName.jp ======================*/}
                     <td className="px-2 py-2 text-xs">
-                      {selectedItemInfo[i] && selectedItemInfo[i]?.itemName ? (
-                        <p>{selectedItemInfo[i]?.itemName.jp}</p>
+                      {selectedItem[i] && selectedItem[i]?.itemName.jp ? (
+                        <p>{selectedItem[i]?.itemName.jp}</p>
                       ) : (
                         <p>No Japanese name available</p>
                       )}

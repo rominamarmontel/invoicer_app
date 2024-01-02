@@ -1,14 +1,19 @@
 export const factureColumns = [
-  { field: '_id', headerName: 'ID', width: 100 },
+  // { field: '_id', headerName: 'ID', width: 100 },
   {
     field: 'factureNumber',
     headerName: 'FACTURE NUMBER',
     width: 200,
   },
   {
+    field: 'createdAt',
+    headerName: 'CREATED DATE',
+    width: 180,
+  },
+  {
     field: 'factureDate',
     headerName: 'FACTURE DATE',
-    width: 200,
+    width: 180,
   },
   {
     field: 'clientName',

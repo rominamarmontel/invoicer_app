@@ -26,7 +26,7 @@ export const GET = async() => {
   }
   try {
     await connectMongoDB()
-    const categories = await Category.find()
+    const categories = await Category.find().sort({ createdAt: -1 })
     return NextResponse.json({categories})
   } catch (error) {
     return NextResponse.json("Something went wrong.")

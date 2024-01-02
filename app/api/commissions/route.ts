@@ -10,7 +10,7 @@ export const GET = async(req:Request) => {
     return NextResponse.json({error: "Not authenticated"}, {status: 401})
   }
   await connectMongoDB()
-  const commissions = await Commission.find()
+  const commissions = await Commission.find().sort({ createdAt: -1 })
   return NextResponse.json({commissions})
 }
 

@@ -11,7 +11,7 @@ export const GET = async(req:Request) => {
   }
   
   await connectMongoDB()
-  const payments = await Payment.find()
+  const payments = await Payment.find().sort({ createdAt: -1 })
   return NextResponse.json({payments})
 }
 
