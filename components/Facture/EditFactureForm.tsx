@@ -17,16 +17,14 @@ import PaymentData from '../Payment/PaymentData'
 import CategoryData from '../Category/CategoryData'
 import ItemData from '../Item/ItemData'
 import CommissionData from '../Commission/CommissionData'
-import FactureNumber from './FactureNumber'
-import CalculatePaymentDue from './CalculatePaymentDue '
 import CalculateSubtotal from './CalculateSubtotal'
 import CalculateAllTotal from './CalculateAllTotal'
+import CalculatePaymentDue from './CalculatePaymentDue '
 
 interface EditFactureFormProps {
   factureData: FactureProps | null
   setFactureData: React.Dispatch<React.SetStateAction<FactureProps | null>>
 }
-
 const EditFactureForm: React.FC<EditFactureFormProps> = ({
   factureData,
   setFactureData,
@@ -37,26 +35,36 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
   const { categories, setCategories } = CategoryData()
   const { items, setItems } = ItemData()
   const { commissions, setCommissions } = CommissionData()
-
   const [company, setCompany] = useState('')
   const [client, setClient] = useState('')
   const [factureDate, setFactureDate] = useState('')
-  const { factureNumber, setFactureNumber, handleCreateFactureNumber } =
-    FactureNumber()
+  const [factureNumber, setFactureNumber] = useState('')
   const [conditionPayment, setConditionPayment] = useState(0)
   const { paymentDue, setPaymentDue } = CalculatePaymentDue(
     factureDate,
     conditionPayment
   )
-  const [title, setTitle] = useState('-1')
+  const [title, setTitle] = useState('')
+  const [currentCategories, setCurrentCategories] = useState<CategoryProps[]>(
+    []
+  )
   const [category, setCategory] = useState('')
+  // const [currentItems, setCurrentItems] = useState<ItemProps[]>([
+  //   {
+  //     _id: '',
+  //     itemName: {
+  //       fr: '',
+  //       jp: '',
+  //     },
+  //   },
+  // ])
+  const [currentItems, setCurrentItems] = useState<ItemProps[]>([])
   const [item, setItem] = useState('')
   const [note, setNote] = useState('')
   const [payment, setPayment] = useState('')
   const [rows, setRows] = useState<RowProps[]>([])
   const { subtotal, setSubtotal } = CalculateSubtotal(rows)
   const [commission, setCommission] = useState('')
-
   const {
     allTotal,
     setAllTotal,
@@ -99,7 +107,9 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
       }
     }
     fetchCompanyDetails()
+  }, [factureData?.company])
 
+  useEffect(() => {
     const fetchClientDetails = async () => {
       try {
         const clientId = factureData?.client
@@ -117,7 +127,9 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
       }
     }
     fetchClientDetails()
+  }, [factureData?.client])
 
+  useEffect(() => {
     const fetchPaymentDetails = async () => {
       try {
         const paymentId = factureData?.payment
@@ -135,7 +147,9 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
       }
     }
     fetchPaymentDetails()
+  }, [factureData?.payment])
 
+  useEffect(() => {
     const fetchCommissionDetails = async () => {
       try {
         const commissionId = factureData?.commission
@@ -154,7 +168,9 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
       }
     }
     fetchCommissionDetails()
+  }, [factureData?.commission])
 
+  useEffect(() => {
     const fetchRowsDetails = async () => {
       try {
         const rowPromises =
@@ -195,16 +211,17 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
         const updatedCategories = await Promise.all<CategoryProps>(
           categoryPromises
         )
-        setCategories(updatedCategories)
-
+        setCurrentCategories(updatedCategories)
         const updatedItems = await Promise.all<ItemProps>(itemPromises)
-        setItems(updatedItems)
+        setCurrentItems(updatedItems)
       } catch (error) {
         console.log(error)
       }
     }
     fetchRowsDetails()
+  }, [factureData?.rows])
 
+  useEffect(() => {
     const initialValues = async () => {
       try {
         setCompany(company || '')
@@ -215,6 +232,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
         setPaymentDue(factureData?.paymentDue || '')
         setTitle(factureData?.title || '')
         setNote(factureData?.note || '')
+        setRows(factureData?.rows || [])
         setPayment(payment || '')
         setCommission(commission || '')
       } catch (error) {
@@ -222,28 +240,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
       }
     }
     initialValues()
-  }, [
-    company,
-    client,
-    commission,
-    payment,
-    setCategories,
-    setFactureNumber,
-    setItems,
-    setPaymentDue,
-    setSelectedCommissionTaux,
-    factureData?.company,
-    factureData?.client,
-    factureData?.payment,
-    factureData?.commission,
-    factureData?.factureDate,
-    factureData?.factureNumber,
-    factureData?.conditionPayment,
-    factureData?.paymentDue,
-    factureData?.title,
-    factureData?.note,
-    factureData,
-  ])
+  }, [])
 
   /* ================ Company ======================*/
   const getCompanyInfoByName = async (companyName: string) => {
@@ -503,25 +500,28 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
     })
 
     try {
-      const res = await fetch('/api/factures', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          company,
-          client,
-          factureDate,
-          factureNumber: factureNumber,
-          conditionPayment,
-          paymentDue,
-          title,
-          rows: formattedRows,
-          note,
-          payment,
-          commission,
-        }),
-      })
+      const res = await fetch(
+        `${process.env.NEXTAUTH_URL}/api/factures/${factureData?._id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            company,
+            client,
+            factureDate,
+            factureNumber: factureNumber,
+            conditionPayment,
+            paymentDue,
+            title,
+            rows: formattedRows,
+            note,
+            payment,
+            commission,
+          }),
+        }
+      )
       if (res.ok) {
         toast.success('Update Facture successfully')
         router.push('/dashboard')
@@ -652,7 +652,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
               <label>TITLE LIST</label>
               <select
                 onChange={(e) => setTitle(e.target.value)}
-                value={factureData?.title || ''}
+                value={factureData?.title}
               >
                 <option value="-1">Choose a Title</option>
                 <option value="preparation">PREPARATION</option>
@@ -674,7 +674,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                       type="string"
                       placeholder="ex. November 2023"
                       onChange={(e) => setNote(e.target.value)}
-                      value={factureData?.note || ''}
+                      value={factureData?.note}
                       className="text-sm"
                     />
                   </th>
@@ -729,7 +729,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                       <select
                         name="category"
                         onChange={(e) => handlerChange(e, i)}
-                        value={categories[i].catName}
+                        value={currentCategories[i]?.catName}
                       >
                         <option value="-1">Choose Category</option>
                         {categories &&
@@ -745,7 +745,7 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                       <select
                         name="item"
                         onChange={(e) => handlerChange(e, i)}
-                        value={items[i].itemName.fr}
+                        value={currentItems[i]?.itemName.fr}
                       >
                         <option value="-1">Choose Item Name</option>
                         {items &&
@@ -758,10 +758,10 @@ const EditFactureForm: React.FC<EditFactureFormProps> = ({
                     </td>
                     {/* ================ itemName.jp ======================*/}
                     <td className="px-2 py-2 text-xs">
-                      {items[i] && items[i]?.itemName ? (
-                        <p>{items[i]?.itemName.jp}</p>
+                      {selectedItemInfo[i] && selectedItemInfo[i]?.itemName ? (
+                        <p>{selectedItemInfo[i]?.itemName.jp}</p>
                       ) : (
-                        <p>No Japanese name available</p>
+                        <p>{currentItems[i]?.itemName.jp}</p>
                       )}
                     </td>
                     {/* ================ Qty ======================*/}

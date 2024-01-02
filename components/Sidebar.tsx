@@ -34,11 +34,11 @@ const Sidebar = () => {
                 <p>PAYMENTS</p>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link href="/dashboard/categories">
                 <p>CATEGORIES</p>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link href="/dashboard/items">
                 <p>ITEMS</p>

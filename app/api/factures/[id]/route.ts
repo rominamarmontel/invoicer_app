@@ -11,6 +11,8 @@ import Item from "@/models/item"
 import Commission from "@/models/commission"
 import { RowProps } from "@/types"
 import Row from "@/models/row"
+import CompanyData from "@/components/Company/CompanyData"
+import ItemData from "@/components/Item/ItemData"
 
 export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
   const session = await getServerSession(authOptions)
@@ -42,7 +44,6 @@ export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
     }
     return companyData;
   };
-  
 
   const getClientInfoByName = async (clientName: string) => {
       const clientData = await Client.findOne({ clientName: String(clientName) });
@@ -61,7 +62,7 @@ export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
   };
 
   const getCategoryInfoByName = async (catName: string) => {
-    const categoryData = await Category.findOne({ catName: String(catName) });
+    const categoryData = await Category.findOne({ _id: catName });
     if (!categoryData) {
       throw new Error('Category not found');
     }
@@ -69,7 +70,7 @@ export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
   };
 
   const getItemInfoByName = async (itemName: string) => {
-    const itemData = await Item.findOne({'itemName.fr': itemName
+    const itemData = await Item.findOne({_id: itemName
     })
     if (!itemData) {
       throw new Error('Item not found')
@@ -88,6 +89,7 @@ export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
   const formattedRows = await Promise.all((rows as Array<RowProps>).map(async (row) => {
     const rowCategory = String(row.category)
     const category = await getCategoryInfoByName(rowCategory);
+
     const rowItem = String(row.item)
     const item = await getItemInfoByName(rowItem);
     if (!category) {
