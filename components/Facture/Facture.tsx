@@ -264,6 +264,9 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
     calculAllTotal()
   }, [subtotal, allTotal, taux])
 
+  /* ================ Number====================*/
+  const numbering = () => {}
+
   return (
     <div className="facture">
       <div className="w-1/4 flex gap-2 items-center">
@@ -462,48 +465,55 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
                 <div className="overflow-hidden">
                   <table className="min-w-full border text-center text-sm font-light dark:border-neutral-500">
                     <thead className="border-b font-medium dark:border-neutral-500 ">
-                      <tr className="border-b bg-white-100 dark:border-neutral-500 ">
-                        <th className="uppercase py-4">{factureData?.title}</th>
-                        <th className="py-4">{factureData?.note}</th>
+                      <tr className="border-b bg-white-100 dark:border-neutral-500">
+                        <th className="uppercase py-4 px-2"></th>
+                        <th className="uppercase py-4 text-left">
+                          {factureData?.title}
+                        </th>
+                        <th className="py-4 text-left">{factureData?.note}</th>
                       </tr>
                       <tr className="border-b bg-neutral-100 dark:border-neutral-500 dark:bg-neutral-700">
                         <th
                           scope="col"
-                          className="border-r px-6 py-4 dark:border-neutral-500"
+                          className="border-r dark:border-neutral-500"
+                        ></th>
+                        <th
+                          scope="col"
+                          className="border-r px-10 py-4 dark:border-neutral-500"
                         >
                           <p>Category</p>
                         </th>
                         <th
                           scope="col"
-                          className="border-r px-6 py-4 dark:border-neutral-500"
+                          className="border-r px-10 py-4 dark:border-neutral-500"
                         >
                           <p>Description</p>
                         </th>
                         <th
                           scope="col"
-                          className="border-r px-6 py-4 dark:border-neutral-500"
+                          className="border-r px-10 py-4 dark:border-neutral-500"
                         >
                           <p>詳細</p>
                         </th>
                         <th
                           scope="col"
-                          className="border-r px-6 py-4 dark:border-neutral-500"
+                          className="border-r dark:border-neutral-500"
                         >
                           <p>Qty</p>
                         </th>
                         <th
                           scope="col"
-                          className="border-r px-3 py-2 dark:border-neutral-500"
+                          className="border-r dark:border-neutral-500"
                         >
                           <p>Unité</p>
                         </th>
                         <th
                           scope="col"
-                          className="border-r px-3 py-2 dark:border-neutral-500"
+                          className="border-r dark:border-neutral-500"
                         >
-                          <p>Prix unitaire</p>
+                          <p>Prix</p>
                         </th>
-                        <th scope="col" className="px-3 py-2">
+                        <th scope="col" className="px-10 py-4">
                           <p>Montant</p>
                         </th>
                       </tr>
@@ -517,19 +527,25 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
                         >
                           <td
                             scope="col"
-                            className="border-r px-3 py-2 dark:border-neutral-500 text-left"
+                            className="border-r p-0 w-0 dark:border-neutral-500 text-xs"
+                          >
+                            {i + 1}
+                          </td>
+                          <td
+                            scope="col"
+                            className="border-r px-10 py-2 dark:border-neutral-500 text-left"
                           >
                             {categories[i] && <p>{categories[i].catName}</p>}
                           </td>
                           <td
                             scope="col"
-                            className="border-r px-3 py-2 dark:border-neutral-500"
+                            className="border-r px-10 py-2 dark:border-neutral-500"
                           >
                             {items[i] && <p>{items[i].itemName.fr}</p>}
                           </td>
                           <td
                             scope="col"
-                            className="border-r px-3 py-2 dark:border-neutral-500"
+                            className="border-r px-10 py-2 dark:border-neutral-500"
                           >
                             {items[i] && <p>{items[i].itemName.jp}</p>}
                           </td>
@@ -561,7 +577,7 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
                       ))}
                       <tr className="border-b dark:border-neutral-500">
                         <td
-                          colSpan={6}
+                          colSpan={7}
                           className="text-right whitespace-nowrap border-r px-3 py-2 dark:border-neutral-500"
                         >
                           <p>Sous Total</p>
@@ -575,7 +591,7 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
                       </tr>
                       <tr className="border-b dark:border-neutral-500">
                         <td
-                          colSpan={6}
+                          colSpan={7}
                           className="text-right whitespace-nowrap border-r px-3 py-2 dark:border-neutral-500"
                         >
                           {commission && <p>{commission}</p>}
@@ -592,7 +608,7 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
                       </tr>
                       <tr className="border-b border-t-2">
                         <td
-                          colSpan={6}
+                          colSpan={7}
                           className="text-right whitespace-nowrap border-r px-3 py-2 font-bold"
                         >
                           TOTAL

@@ -438,6 +438,7 @@ const CreateFactureForm = () => {
                       name="note"
                       type="string"
                       placeholder="ex. November 2023"
+                      className="h-8"
                       onChange={(e) => setNote(e.target.value)}
                     />
                   </th>

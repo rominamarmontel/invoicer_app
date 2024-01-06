@@ -620,6 +620,7 @@ const EditFactureForm = ({ facture }: { facture: FactureProps }) => {
                       name="note"
                       type="string"
                       placeholder="ex. November 2023"
+                      className="h-8"
                       onChange={(e) => setNote(e.target.value)}
                       value={note}
                     />
