@@ -5,7 +5,6 @@ import {
   ClientProps,
   CommissionProps,
   CompanyProps,
-  FactureProps,
   ItemProps,
   PaymentProps,
   RowProps,
@@ -34,13 +33,18 @@ const CreateFactureForm = () => {
   const { commissions, setCommissions } = CommissionData()
   const { factureNumber, setFactureNumber, handleCreateFactureNumber } =
     FactureNumber()
-  const [facture, setFacture] = useState<FactureProps | null>(null)
-  const [company, setCompany] = useState<CompanyProps[]>([])
   const [selectedCompany, setSelectedCompany] = useState<CompanyProps | null>(
     null
   )
-  const [client, setClient] = useState<ClientProps[]>([])
   const [selectedClient, setSelectedClient] = useState<ClientProps | null>(null)
+  const [selectedPayment, setSelectedPayment] = useState<PaymentProps | null>(
+    null
+  )
+  const [selectedCommission, setSelectedCommission] =
+    useState<CommissionProps | null>(null)
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoryProps | null>(null)
+
   const [factureDate, setFactureDate] = useState('')
   const [conditionPayment, setConditionPayment] = useState(0)
   const { paymentDue, setPaymentDue } = CalculatePaymentDue(
@@ -48,22 +52,9 @@ const CreateFactureForm = () => {
     conditionPayment
   )
   const [title, setTitle] = useState('')
-  const [category, setCategory] = useState<CategoryProps[]>([])
-  const [selectedCategory, setSelectedCategory] =
-    useState<CategoryProps | null>(null)
-  const [item, setItem] = useState<ItemProps[]>([])
-  const [selectedItemJp, setSelectedItemJp] = useState<ItemProps | null>(null)
   const [note, setNote] = useState('')
-  const [payment, setPayment] = useState<PaymentProps[]>([])
-  const [selectedPayment, setSelectedPayment] = useState<PaymentProps | null>(
-    null
-  )
-  const router = useRouter()
   const [rows, setRows] = useState<RowProps[]>([])
   const { subtotal, setSubtotal } = CalculateSubtotal(rows)
-  const [commission, setCommission] = useState<CommissionProps[]>([])
-  const [selectedCommission, setSelectedCommission] =
-    useState<CommissionProps | null>(null)
   const {
     allTotal,
     setAllTotal,
@@ -72,6 +63,7 @@ const CreateFactureForm = () => {
     tauxValue,
     setTauxValue,
   } = CalculateAllTotal(subtotal)
+  const router = useRouter()
 
   /* ================ Company ======================*/
   const companyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -197,11 +189,11 @@ const CreateFactureForm = () => {
   /* ================ handleSendAndSave ======================*/
   const handleSendAndSave = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!company) {
+    if (!selectedCompany?.name) {
       toast.error('Please select a COMPANY.')
       return
     }
-    if (!client) {
+    if (!selectedClient?.clientName) {
       toast.error('Please select a CLIENT.')
       return
     }
@@ -213,7 +205,7 @@ const CreateFactureForm = () => {
       toast.error('Please select a PAYMENT TERMS.')
       return
     }
-    if (!payment) {
+    if (!selectedPayment?.bankName) {
       toast.error('Please select a PAYMENT MOYEN.')
       return
     }
@@ -225,7 +217,6 @@ const CreateFactureForm = () => {
       toast.error('Please add at least one row.')
       return
     }
-
     const rowsValidation = rows.every((row, index) => {
       if (!row.category) {
         toast.error(`Please select a CATEGORY for row ${index + 1}.`)
@@ -253,7 +244,7 @@ const CreateFactureForm = () => {
       }
       return true
     })
-    if (!commission) {
+    if (!selectedCommission?.commissionName) {
       toast.error('Please select a COMMISSION.')
       return
     }
@@ -273,7 +264,7 @@ const CreateFactureForm = () => {
         total: row.total,
       }
     })
-
+    console.log(formattedRows)
     try {
       const res = await fetch('/api/factures', {
         method: 'POST',
@@ -294,7 +285,27 @@ const CreateFactureForm = () => {
           commission: selectedCommission?._id,
         }),
       })
+      console.log(
+        'Fetch request body:',
+        JSON.stringify({
+          company: selectedCompany?._id,
+          client: selectedClient?._id,
+          factureDate,
+          factureNumber: factureNumber,
+          conditionPayment,
+          paymentDue,
+          title,
+          rows: formattedRows,
+          note,
+          payment: selectedPayment?._id,
+          commission: selectedCommission?._id,
+        })
+      )
       if (res.ok) {
+        const updatedRows = await res.json()
+        console.log('formattedRows after update:', formattedRows)
+        console.log(updatedRows)
+
         toast.success('Create Facture successfully')
         router.push('/dashboard')
         router.refresh()

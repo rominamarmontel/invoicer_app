@@ -175,6 +175,17 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
   }, [factureData?.commission, subtotal, commission])
 
   useEffect(() => {
+    const categoryOrder = [
+      '656321acccd2ad4d3d6f4d0a',
+      '65632247ccd2ad4d3d6f4d32',
+      '65632461ccd2ad4d3d6f4d3a',
+      '656321beccd2ad4d3d6f4d12',
+      '6563221cccd2ad4d3d6f4d22',
+      '656324ecccd2ad4d3d6f4d42',
+      '6563220bccd2ad4d3d6f4d1a',
+      '6563222dccd2ad4d3d6f4d2a',
+    ]
+
     const fetchRowsDetails = async () => {
       try {
         const rowPromises =
@@ -188,7 +199,16 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
             }
           }) || []
         const rowsData = await Promise.all(rowPromises)
-        setRows(rowsData.filter(Boolean))
+        // setRows(rowsData.filter(Boolean))
+        const sortByCategoryOrder = (a: any, b: any) => {
+          const indexA = categoryOrder.indexOf(a.category)
+          const indexB = categoryOrder.indexOf(b.category)
+          console.log('Category A:', a.category.catName, 'Index A:', indexA)
+          console.log('Category B:', b.category.catName, 'Index B:', indexB)
+          return indexA - indexB
+        }
+        const sortedRows = rowsData.sort(sortByCategoryOrder)
+        setRows(sortedRows)
 
         const categoryPromises = rowsData.map(async (row: RowProps) => {
           const resCat = await fetch(`/api/categories/${row.category}`)
@@ -222,7 +242,8 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
     }
     fetchRowsDetails()
   }, [factureData?.rows, setCategories, setItems])
-
+  console.log(categories)
+  console.log(rows)
   /* ================ Calcul Subtotal ======================*/
   useEffect(() => {
     const calculateSubtotal = () => {
@@ -496,7 +517,7 @@ const Facture: React.FC<FactureFormProps> = ({ params }) => {
                         >
                           <td
                             scope="col"
-                            className="border-r px-3 py-2 dark:border-neutral-500"
+                            className="border-r px-3 py-2 dark:border-neutral-500 text-left"
                           >
                             {categories[i] && <p>{categories[i].catName}</p>}
                           </td>

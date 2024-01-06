@@ -11,135 +11,132 @@ import Item from "@/models/item"
 import Commission from "@/models/commission"
 import { RowProps } from "@/types"
 import Row from "@/models/row"
-import CompanyData from "@/components/Company/CompanyData"
+import { ObjectId } from 'mongodb';
+
 
 export const PUT = async(req:Request,{params}:{params: {id:string}}) => {
   const session = await getServerSession(authOptions)
   if (!session) {
     return NextResponse.json({error: "Not authenticated"}, {status: 401})
   }
-
   const {id} = params
-  const {
-    company,
-    client,
-    factureDate,
-    factureNumber,
-    conditionPayment,
-    paymentDue,
-    title,
-    note,
-    payment,
-    rows,
-    subtotal,
-    commission,
-    allTotal,
-  } = await req.json()
 
-  const getCompanyInfoByName = async (selectedCompanyName: string) => {
-    const companyData = await Company.findOne({ _id: new String(selectedCompanyName) })
-    if (!companyData) {
-      throw new Error(`Company not found: ${selectedCompanyName}`)
+  try {
+    await connectMongoDB()
+    const {
+      company,
+      client,
+      factureDate,
+      factureNumber,
+      conditionPayment,
+      paymentDue,
+      title,
+      note,
+      payment,
+      rows,
+      commission,
+    } = await req.json()
+
+    const getCompanyInfoById = async (companyId: string) => {
+      const companyData = await Company.findById(companyId)
+      if (!companyData) {
+        throw new Error(`Company not found: ${companyId}`)
+      }
+      return companyData
     }
-    return companyData
-  }
 
-  const getClientInfoByName = async (selectedClientName: string) => {
-    const clientData = await Client.findOne({ _id: String(selectedClientName) })
-    if (!clientData) {
-      throw new Error('Client not found')
+    const getClientInfoById = async (clientId: string) => {
+      const clientData = await Client.findById(clientId)
+      if (!clientData) {
+        throw new Error('Client not found')
+      }
+      return clientData
     }
-    return clientData
-  }
 
-  const getPaymentInfoByName = async (selectedPaymentName: string) => {
-  const paymentData = await Payment.findOne({ _id: String(selectedPaymentName) })
-  if (!paymentData) {
-    throw new Error('Payment not found')
-  }
-  return paymentData
-  }
-
-  const getCommissionInfoByName = async(selectedCommissionName: string) => {
-    const commissionData = await Commission.findOne({_id: String(selectedCommissionName)})
-    if (!commissionData) {
-      throw new Error('Commission not found')
+    const getPaymentInfoById = async (paymentId: string) => {
+      const paymentData = await Payment.findById(paymentId)
+      if (!paymentData) {
+        throw new Error('Payment not found')
+      }
+      return paymentData
     }
-    return commissionData
-  }
 
-  const getCategoryInfoByName = async (catName: string) => {
-    const categoryData = await Category.findOne({ catName: String(catName) })
-    if (!categoryData) {
-      throw new Error('Category not found')
+    const getCommissionInfoById = async (commissionId: string) => {
+      const commissionData = await Commission.findById(commissionId)
+      if (!commissionData) {
+        throw new Error('Commission not found')
+      }
+      return commissionData
     }
-    return categoryData
-  }
 
+    const getCategoryInfoById = async (categoryId: string) => {
+      const categoryData = await Category.findById(categoryId)
+      if (!categoryData) {
+        throw new Error('Category not found')
+      }
+      return categoryData
+    }
 
-  const getItemInfoByName = async (itemName: string) => {
-    const itemData = await Item.findOne({ 'itemName.fr': itemName })  
+    const getItemInfoById = async (itemId: string) => {
+      const itemData = await Item.findById(itemId)
       if (!itemData) {
         throw new Error('Item not found')
       }
       return itemData
+    }
+
+    const formattedRows = await Promise.all((rows as Array<RowProps>).map(async (row) => {
+      const rowCategory = String(row.category)
+      const category = await getCategoryInfoById(rowCategory)
+      const rowItem = String(row.item)
+      const item = await getItemInfoById(rowItem)
+
+      return {
+        category: category._id,
+        item: item._id,
+        itemPlus: row.itemPlus,
+        qty: row.qty,
+        price: row.price,
+        unit: row.unit,
+        total: row.total,
+      };
+    }));
+
+    let newRows = []
+    for (let i = 0; i < formattedRows.length; i++) {
+      const newRow = await Row.create({
+        category: formattedRows[i].category,
+        item: formattedRows[i].item,
+        itemPlus: formattedRows[i].itemPlus,
+        qty: formattedRows[i].qty,
+        price: formattedRows[i].price,
+        unit: formattedRows[i].unit,
+        total: formattedRows[i].total,
+      })
+      await newRow.populate('category item')
+      await newRows.push(newRow)
+    }
+
+    const updatedFacture = await Facture.findByIdAndUpdate(id, {
+      company: await getCompanyInfoById(company),
+      client: await getClientInfoById(client),
+      factureDate,
+      factureNumber,
+      conditionPayment,
+      paymentDue,
+      title,
+      rows: newRows,
+      note,
+      payment: await getPaymentInfoById(payment),
+      commission: await getCommissionInfoById(commission),
+    }, { new: true })
+
+    await updatedFacture.populate('company client payment commission')
+    return NextResponse.json({ res: updatedFacture })
+  } catch (error) {
+    console.error('Error updating Facture:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
-
-  const formattedRows = await Promise.all((rows as Array<RowProps>).map(async (row) => {
-    const rowCategory = String(row.category)
-    const category = await getCategoryInfoByName(rowCategory);
-
-    const rowItem = String(row.item)
-    const item = await getItemInfoByName(rowItem);
-    if (!category) {
-      throw new Error('Category not found');
-    }
-    if (!item) {
-      throw new Error('Item not found');
-    }
-    return {
-      category: category._id,
-      item: item._id,
-      itemPlus: row.itemPlus,
-      qty: row.qty,
-      price: row.price,
-      unit: row.unit,
-      total: row.total,
-    };
-  }));
-
-let newRows = [];
-for (let i = 0; i < formattedRows.length; i++) {
-  const newRow = await Row.create({
-    category: formattedRows[i].category,
-    item: formattedRows[i].item,
-    itemPlus: formattedRows[i].itemPlus,
-    qty: formattedRows[i].qty,
-    price: formattedRows[i].price,
-    unit: formattedRows[i].unit,
-    total: formattedRows[i].total,
-  });
-  await newRow.populate('category item');
-  await newRows.push(newRow)
-}
-
-  await connectMongoDB()
-  await Facture.findByIdAndUpdate(id, {
-    company: await getCompanyInfoByName(company),
-    client: await getClientInfoByName(client),
-    factureDate,
-    factureNumber,
-    conditionPayment,
-    paymentDue,
-    title,
-    rows: newRows,
-    note,
-    payment: await getPaymentInfoByName(payment),
-    subtotal,
-    commission: await getCommissionInfoByName(commission),
-    allTotal,
-  })
-  return NextResponse.json({message:"Facture updated"}, {status: 200})
 }
 
 export const GET = async(req:Request, {params}: {params: {id:string}}) => {

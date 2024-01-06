@@ -11,6 +11,8 @@ import Category from "@/models/category";
 import Item from "@/models/item";
 import Commission from "@/models/commission";
 import { ObjectId } from 'mongodb';
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "../auth/auth"
 
 
 export const GET = async(req:Request) => {
@@ -20,6 +22,11 @@ export const GET = async(req:Request) => {
 }
 
 export const POST = async(req:Request) => {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return NextResponse.json({error: "Not authenticated"}, {status: 401})
+  }
+  
   try {
   await connectMongoDB()
   const {
@@ -52,7 +59,7 @@ export const POST = async(req:Request) => {
   }
 
   const getCompanyInfoByName = async (selectedCompanyName: string) => {
-    const companyData = await Company.findOne({ _id: new ObjectId(selectedCompanyName) })
+    const companyData = await Company.findOne({ _id: String(selectedCompanyName) })
     if (!companyData) {
       throw new Error(`Company not found: ${selectedCompanyName}`)
     }

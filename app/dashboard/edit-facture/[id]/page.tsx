@@ -1,17 +1,39 @@
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../../../api/auth/auth'
 import { redirect } from 'next/navigation'
-import OneFacture from '@/components/Facture/OneFacture'
 import EditFactureForm from '@/components/Facture/EditFactureForm'
+import { FactureProps } from '@/types'
 
-const page = ({ params }: { params: { id: string } }) => {
-  const id = params.id
-  const session = getServerSession(authOptions)
+const getFacture = async (id: string): Promise<FactureProps | null> => {
+  try {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/factures/${id}`, {
+      cache: 'no-store',
+    })
+    if (res.ok) {
+      const data = await res.json()
+      return data.facture
+    }
+  } catch (error) {
+    console.log(error)
+  }
+  return null
+}
+
+export default async function EditFacture({
+  params,
+}: {
+  params: { id: string }
+}) {
+  const session = await getServerSession(authOptions)
   if (!session) {
     redirect('/login')
   }
+  const id = params.id
+  const facture = await getFacture(id)
 
-  return <OneFacture id={id} />
+  return (
+    <>
+      {facture ? <EditFactureForm facture={facture} /> : <div>Loading...</div>}
+    </>
+  )
 }
-
-export default page

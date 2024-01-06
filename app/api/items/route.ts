@@ -11,7 +11,7 @@ export const GET = async (req: Request) => {
   }
   try {
     await connectMongoDB();
-    const items = await Item.find().sort({ createdAt: -1 })
+    const items = await Item.find()
     return NextResponse.json({items})
   } catch (error) {
     console.error('Error fetching items:', error)
